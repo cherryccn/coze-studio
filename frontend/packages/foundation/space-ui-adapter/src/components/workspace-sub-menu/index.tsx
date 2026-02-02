@@ -14,24 +14,101 @@
  * limitations under the License.
  */
 
-import { WorkspaceSubMenu as BaseWorkspaceSubMenu } from '@coze-foundation/space-ui-base';
+// [原有导入 - 保留]
+// import { WorkspaceSubMenu as BaseWorkspaceSubMenu } from '@coze-foundation/space-ui-base';
+// import { useSpaceStore } from '@coze-foundation/space-store';
+// import { I18n } from '@coze-arch/i18n';
+// import { useRouteConfig } from '@coze-arch/bot-hooks';
+// import {
+//   IconCozBot,
+//   IconCozBotFill,
+//   IconCozKnowledge,
+//   IconCozKnowledgeFill,
+// } from '@coze-arch/coze-design/icons';
+// import { Space, Avatar, Typography } from '@coze-arch/coze-design';
+// import { SpaceSubModuleEnum } from '@/const';
+
+// [新增导入 - 添加空间切换下拉菜单功能]
+import { useNavigate } from 'react-router-dom';
+
+import {
+  WorkspaceSubMenu as BaseWorkspaceSubMenu,
+  SpaceSwitcherDropdown,
+} from '@coze-foundation/space-ui-base';
 import { useSpaceStore } from '@coze-foundation/space-store';
 import { I18n } from '@coze-arch/i18n';
-import { useRouteConfig } from '@coze-arch/bot-hooks';
 import {
   IconCozBot,
   IconCozBotFill,
   IconCozKnowledge,
   IconCozKnowledgeFill,
+  IconCozArrowDown,
 } from '@coze-arch/coze-design/icons';
 import { Space, Avatar, Typography } from '@coze-arch/coze-design';
+import { useRouteConfig } from '@coze-arch/bot-hooks';
 
 import { SpaceSubModuleEnum } from '@/const';
 
+// [原有代码 - 已注释]
+// export const WorkspaceSubMenu = () => {
+//   const { subMenuKey } = useRouteConfig();
+//
+//   const currentSpace = useSpaceStore(state => state.space);
+//
+//   const subMenu = [
+//     {
+//       icon: <IconCozBot />,
+//       activeIcon: <IconCozBotFill />,
+//       title: () => I18n.t('navigation_workspace_develop', {}, 'Develop'),
+//       path: SpaceSubModuleEnum.DEVELOP,
+//       dataTestId: 'navigation_workspace_develop',
+//     },
+//     {
+//       icon: <IconCozKnowledge />,
+//       activeIcon: <IconCozKnowledgeFill />,
+//       title: () => I18n.t('navigation_workspace_library', {}, 'Library'),
+//       path: SpaceSubModuleEnum.LIBRARY,
+//       dataTestId: 'navigation_workspace_library',
+//     },
+//   ];
+//
+//   const headerNode = (
+//     <div className="cursor-pointer w-full">
+//       <Space
+//         className="h-[48px] px-[8px] w-full hover:coz-mg-secondary-hovered rounded-[8px]"
+//         spacing={8}
+//       >
+//         <Avatar
+//           className="w-[24px] h-[24px] rounded-[6px] shrink-0"
+//           src={currentSpace?.icon_url}
+//         />
+//         <Typography.Text
+//           ellipsis={{ showTooltip: true, rows: 1 }}
+//           className="flex-1 coz-fg-primary text-[14px] font-[500]"
+//         >
+//           {currentSpace?.name || ''}
+//         </Typography.Text>
+//       </Space>
+//     </div>
+//   );
+//
+//   return (
+//     <BaseWorkspaceSubMenu
+//       header={headerNode}
+//       menus={subMenu}
+//       currentSubMenu={subMenuKey}
+//     />
+//   );
+// };
+
+// [新增代码 - 添加空间切换下拉菜单功能]
 export const WorkspaceSubMenu = () => {
   const { subMenuKey } = useRouteConfig();
+  const navigate = useNavigate();
 
+  // 获取当前空间和空间列表
   const currentSpace = useSpaceStore(state => state.space);
+  const spaceList = useSpaceStore(state => state.spaceList);
 
   const subMenu = [
     {
@@ -50,24 +127,47 @@ export const WorkspaceSubMenu = () => {
     },
   ];
 
+  // 空间切换处理函数
+  const handleSpaceSwitch = (spaceId: string) => {
+    // 导航到新空间的 develop 页面
+    navigate(`/space/${spaceId}/develop`);
+  };
+
+  // 添加空间处理函数（可选）
+  const handleAddSpace = () => {
+    // TODO: 打开创建空间的模态框
+    console.log('Add new space clicked');
+  };
+
+  // 带下拉功能的空间选择器头部
   const headerNode = (
-    <div className="cursor-pointer w-full">
-      <Space
-        className="h-[48px] px-[8px] w-full hover:coz-mg-secondary-hovered rounded-[8px]"
-        spacing={8}
-      >
-        <Avatar
-          className="w-[24px] h-[24px] rounded-[6px] shrink-0"
-          src={currentSpace?.icon_url}
-        />
-        <Typography.Text
-          ellipsis={{ showTooltip: true, rows: 1 }}
-          className="flex-1 coz-fg-primary text-[14px] font-[500]"
+    <SpaceSwitcherDropdown
+      currentSpace={currentSpace}
+      spaceList={spaceList}
+      onSpaceClick={handleSpaceSwitch}
+      onAddSpaceClick={handleAddSpace}
+      searchPlaceholder={I18n.t('search_workspace', {}, 'Search workspace')}
+      addSpaceText={I18n.t('add_new_space', {}, 'Add new space')}
+    >
+      <div className="cursor-pointer w-full">
+        <Space
+          className="h-[48px] px-[8px] w-full hover:coz-mg-secondary-hovered rounded-[8px]"
+          spacing={8}
         >
-          {currentSpace?.name || ''}
-        </Typography.Text>
-      </Space>
-    </div>
+          <Avatar
+            className="w-[24px] h-[24px] rounded-[6px] shrink-0"
+            src={currentSpace?.icon_url}
+          />
+          <Typography.Text
+            ellipsis={{ showTooltip: true, rows: 1 }}
+            className="flex-1 coz-fg-primary text-[14px] font-[500]"
+          >
+            {currentSpace?.name || ''}
+          </Typography.Text>
+          <IconCozArrowDown className="text-[12px] coz-fg-tertiary shrink-0" />
+        </Space>
+      </div>
+    </SpaceSwitcherDropdown>
   );
 
   return (

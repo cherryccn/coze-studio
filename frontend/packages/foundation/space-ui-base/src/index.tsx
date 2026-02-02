@@ -16,6 +16,8 @@
 
 export { WorkspaceSubMenu } from './components/workspace-sub-menu';
 export { SpaceIdLayout } from './components/space-id-layout';
+// [新增导出] 空间切换下拉菜单组件
+export { SpaceSwitcherDropdown } from './components/space-switcher-dropdown';
 
 export { useInitSpace } from './hooks/use-init-space';
 
