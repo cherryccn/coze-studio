@@ -153,7 +153,7 @@ export const Develop: FC<DevelopProps> = ({ spaceId }) => {
           </HeaderTitle>
           <HeaderActions>
             <Button icon={<IconCozPlus />} onClick={actions.createIntelligence}>
-              {I18n.t('workspace_create')}
+              {I18n.t('workspace_project', {}, '项目')}
             </Button>
           </HeaderActions>
         </Header>

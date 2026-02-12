@@ -16,8 +16,8 @@
 
 import { Outlet, useParams } from 'react-router-dom';
 
-import { useDestorySpace } from '@coze-common/auth';
 import { useInitSpaceRole } from '@coze-common/auth-adapter';
+import { useDestorySpace } from '@coze-common/auth';
 
 const SpaceIdContainer = ({ spaceId }: { spaceId: string }) => {
   // When the space component is destroyed, empty the corresponding space data

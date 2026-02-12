@@ -30,10 +30,12 @@
 
 // [新增导入 - 添加空间切换下拉菜单功能]
 import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 
 import {
   WorkspaceSubMenu as BaseWorkspaceSubMenu,
   SpaceSwitcherDropdown,
+  SpaceType,
 } from '@coze-foundation/space-ui-base';
 import { useSpaceStore } from '@coze-foundation/space-store';
 import { I18n } from '@coze-arch/i18n';
@@ -43,11 +45,17 @@ import {
   IconCozKnowledge,
   IconCozKnowledgeFill,
   IconCozArrowDown,
+  IconCozDocument,
+  IconCozDocumentFill,
+  IconCozPeople,
+  IconCozPeopleFill,
 } from '@coze-arch/coze-design/icons';
 import { Space, Avatar, Typography } from '@coze-arch/coze-design';
 import { useRouteConfig } from '@coze-arch/bot-hooks';
 
 import { SpaceSubModuleEnum } from '@/const';
+
+import { useCreateSpace } from '../../hooks/use-create-space';
 
 // [原有代码 - 已注释]
 // export const WorkspaceSubMenu = () => {
@@ -110,6 +118,14 @@ export const WorkspaceSubMenu = () => {
   const currentSpace = useSpaceStore(state => state.space);
   const spaceList = useSpaceStore(state => state.spaceList);
 
+  // 创建空间模态框
+  const { node: createSpaceModal, open: openCreateSpaceModal } = useCreateSpace({
+    autoNavigate: true,
+    onSuccess: spaceId => {
+      console.log('Workspace created successfully:', spaceId);
+    },
+  });
+
   const subMenu = [
     {
       icon: <IconCozBot />,
@@ -125,6 +141,20 @@ export const WorkspaceSubMenu = () => {
       path: SpaceSubModuleEnum.LIBRARY,
       dataTestId: 'navigation_workspace_library',
     },
+    {
+      icon: <IconCozDocument />,
+      activeIcon: <IconCozDocumentFill />,
+      title: () => I18n.t('navigation_workspace_education', {}, 'Education'),
+      path: SpaceSubModuleEnum.EDUCATION,
+      dataTestId: 'navigation_workspace_education',
+    },
+    {
+      icon: <IconCozPeople />,
+      activeIcon: <IconCozPeopleFill />,
+      title: () => I18n.t('navigation_workspace_teacher', {}, 'Teacher'),
+      path: SpaceSubModuleEnum.TEACHER,
+      dataTestId: 'navigation_workspace_teacher',
+    },
   ];
 
   // 空间切换处理函数
@@ -133,11 +163,20 @@ export const WorkspaceSubMenu = () => {
     navigate(`/space/${spaceId}/develop`);
   };
 
-  // 添加空间处理函数（可选）
+  // 添加空间处理函数
   const handleAddSpace = () => {
-    // TODO: 打开创建空间的模态框
-    console.log('Add new space clicked');
+    // TODO: 后续添加权限和数量限制检查
+    openCreateSpaceModal();
   };
+
+  // 使用 useMemo 缓存文本，避免在渲染时调用 I18n 函数导致副作用
+  const addSpaceText = useMemo(() => {
+    const currentLang = I18n.getLanguage?.() || 'zh-CN';
+    const isZhCN = currentLang.startsWith('zh');
+    return isZhCN
+      ? `${I18n.t('add')}${I18n.t('navigation_workspace')}`
+      : `${I18n.t('add')} ${I18n.t('navigation_workspace')}`;
+  }, []);
 
   // 带下拉功能的空间选择器头部
   const headerNode = (
@@ -146,8 +185,12 @@ export const WorkspaceSubMenu = () => {
       spaceList={spaceList}
       onSpaceClick={handleSpaceSwitch}
       onAddSpaceClick={handleAddSpace}
-      searchPlaceholder={I18n.t('search_workspace', {}, 'Search workspace')}
-      addSpaceText={I18n.t('add_new_space', {}, 'Add new space')}
+      searchPlaceholder={I18n.t(
+        'workspace_search_placeholder',
+        {},
+        'Search your workspace',
+      )}
+      addSpaceText={addSpaceText}
     >
       <div className="cursor-pointer w-full">
         <Space
@@ -162,7 +205,9 @@ export const WorkspaceSubMenu = () => {
             ellipsis={{ showTooltip: true, rows: 1 }}
             className="flex-1 coz-fg-primary text-[14px] font-[500]"
           >
-            {currentSpace?.name || ''}
+            {currentSpace?.space_type === SpaceType.Personal
+              ? I18n.t('menu_title_personal_space', {}, currentSpace?.name)
+              : currentSpace?.name || ''}
           </Typography.Text>
           <IconCozArrowDown className="text-[12px] coz-fg-tertiary shrink-0" />
         </Space>
@@ -171,10 +216,13 @@ export const WorkspaceSubMenu = () => {
   );
 
   return (
-    <BaseWorkspaceSubMenu
-      header={headerNode}
-      menus={subMenu}
-      currentSubMenu={subMenuKey}
-    />
+    <>
+      <BaseWorkspaceSubMenu
+        header={headerNode}
+        menus={subMenu}
+        currentSubMenu={subMenuKey}
+      />
+      {createSpaceModal}
+    </>
   );
 };

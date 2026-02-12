@@ -150,3 +150,74 @@ export const ExplorePluginPage = lazy(() =>
     default: exps.PluginPage,
   })),
 );
+
+// Education platform - Script library list page
+export const EduScriptListPage = lazy(() =>
+  import('@coze-edu/script-library').then(res => ({
+    default: res.ScriptListPage,
+  })),
+);
+
+// Education platform - Script detail page
+export const EduScriptDetailPage = lazy(() =>
+  import('@coze-edu/script-library').then(res => ({
+    default: res.ScriptDetailPage,
+  })),
+);
+
+// Education platform - Learning center page
+export const EduLearningCenter = lazy(() =>
+  import('@coze-edu/learning').then(res => ({
+    default: res.LearningCenter,
+  })),
+);
+
+// Education platform - Script learning page
+export const EduScriptLearning = lazy(() =>
+  import('@coze-edu/learning').then(res => ({
+    default: res.ScriptLearning,
+  })),
+);
+
+// Education platform - My projects page
+export const EduMyProjects = lazy(() =>
+  import('@coze-edu/learning').then(res => ({
+    default: res.MyProjects,
+  })),
+);
+
+// Education platform - Teacher - Class list page
+export const EduTeacherClassList = lazy(() =>
+  import('@coze-edu/teacher').then(res => ({
+    default: res.ClassList,
+  })),
+);
+
+// Education platform - Teacher - Class detail page
+export const EduTeacherClassDetail = lazy(() =>
+  import('@coze-edu/teacher').then(res => ({
+    default: res.ClassDetail,
+  })),
+);
+
+// Education platform - Student - Join class page (临时占位)
+export const EduStudentJoinClass = lazy(() =>
+  import('@coze-edu/learning').then(res => ({
+    default: res.LearningCenter,
+  })),
+);
+
+// Education platform - Student - Class list page (临时占位)
+export const EduStudentClassList = lazy(() =>
+  import('@coze-edu/learning').then(res => ({
+    default: res.LearningCenter,
+  })),
+);
+
+// Education platform - Student - Class detail page (临时占位)
+export const EduStudentClassDetail = lazy(() =>
+  import('@coze-edu/learning').then(res => ({
+    default: res.LearningCenter,
+  })),
+);
+

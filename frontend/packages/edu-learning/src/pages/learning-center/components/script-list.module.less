@@ -1,0 +1,63 @@
+.scriptList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+}
+
+.scriptCard {
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.icon {
+  font-size: 32px;
+  margin-right: 12px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--semi-color-text-0);
+}
+
+.description {
+  font-size: 14px;
+  color: var(--semi-color-text-2);
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+  min-height: 44px;
+}
+
+.metadata {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.duration {
+  font-size: 13px;
+  color: var(--semi-color-text-2);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+
+  button {
+    flex: 1;
+  }
+}

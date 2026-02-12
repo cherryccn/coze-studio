@@ -261,6 +261,33 @@ func (u *UserApplicationService) GetSpaceListV2(ctx context.Context, req *playgr
 	}, nil
 }
 
+func (u *UserApplicationService) SaveSpaceV2(ctx context.Context, req *playground.SaveSpaceV2Request) (
+	resp *playground.SaveSpaceV2Response, err error,
+) {
+	uid := ctxutil.MustGetUIDFromCtx(ctx)
+
+	// Create the space
+	createResp, err := u.DomainSVC.CreateSpace(ctx, &user.CreateSpaceRequest{
+		Name:        req.Name,
+		Description: req.Description,
+		IconURI:     req.IconURI,
+		SpaceType:   entity.SpaceType(req.SpaceType),
+		OwnerID:     uid,
+		CreatorID:   uid,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &playground.SaveSpaceV2Response{
+		Data: &playground.SaveSpaceRet{
+			ID:           ptr.Of(createResp.SpaceID),
+			CheckNotPass: ptr.Of(false),
+		},
+		Code: 0,
+	}, nil
+}
+
 func (u *UserApplicationService) MGetUserBasicInfo(ctx context.Context, req *playground.MGetUserBasicInfoRequest) (
 	resp *playground.MGetUserBasicInfoResponse, err error,
 ) {

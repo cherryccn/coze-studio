@@ -17,8 +17,8 @@
 import { type ReactNode } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
-import { Space, Skeleton } from '@coze-arch/coze-design';
 import { useSpaceStore } from '@coze-foundation/space-store';
+import { Space, Skeleton } from '@coze-arch/coze-design';
 
 import { type IWorkspaceListItem } from './components/workspace-list-item';
 import { WorkspaceList } from './components/workspace-list';

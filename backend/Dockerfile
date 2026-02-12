@@ -1,5 +1,6 @@
 # Stage 1: Builder for Go application
-FROM golang:1.24-alpine AS builder
+# Using Go 1.24rc1 to meet project requirements
+FROM golang:1.24rc1-alpine AS builder
 
 WORKDIR /app
 
@@ -8,13 +9,23 @@ RUN apk add --no-cache git gcc libc-dev
 
 # Copy go.mod and go.sum first to leverage Docker cache
 COPY backend/go.mod backend/go.sum ./
+
+# Set Go proxy for China network
+ENV GOPROXY=https://goproxy.cn,direct
+# Allow automatic download of Go toolchain to meet go.mod requirements
+ENV GOTOOLCHAIN=auto
+
 RUN go mod download
 
 # Copy the entire backend source code
 COPY backend/ ./
 
-# Build the Go application
-RUN go build -ldflags="-s -w" -o /app/opencoze main.go
+# Update sonic to latest version compatible with Go 1.24
+RUN go get -u github.com/bytedance/sonic@latest && go mod tidy
+
+# Build the Go application with CGO disabled and sonic_no_asm tag
+ENV CGO_ENABLED=0
+RUN go build -tags sonic_no_asm -ldflags="-s -w" -o /app/opencoze main.go
 
 
 # Stage 2: Final image

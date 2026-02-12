@@ -28,6 +28,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 
 	coze "github.com/coze-dev/coze-studio/backend/api/router/coze"
+	// edu "github.com/coze-dev/coze-studio/backend/api/router/edu"
 	"github.com/coze-dev/coze-studio/backend/pkg/logs"
 )
 
@@ -35,6 +36,7 @@ import (
 func GeneratedRegister(r *server.Hertz) {
 	// INSERT_POINT: DO NOT DELETE THIS LINE!
 	coze.Register(r)
+	// edu.Register(r) // Education platform routes - temporarily disabled
 	staticFileRegister(r)
 }
 

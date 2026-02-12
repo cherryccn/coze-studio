@@ -19,6 +19,8 @@ import { type FC, useRef, useEffect, useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import classNames from 'classnames';
 import { useInfiniteScroll } from 'ahooks';
+import { useSpaceStore } from '@coze-foundation/space-store';
+import { cozeMitt, type RefreshFavListParams } from '@coze-common/coze-mitt';
 import { reporter } from '@coze-arch/logger';
 import {
   type Intelligence,
@@ -27,12 +29,10 @@ import {
   search,
 } from '@coze-arch/idl/intelligence_api';
 import { I18n } from '@coze-arch/i18n';
+import { Space, Loading } from '@coze-arch/coze-design';
+import { CustomError } from '@coze-arch/bot-error';
 import { type SpaceType } from '@coze-arch/bot-api/developer_api';
 import { intelligenceApi } from '@coze-arch/bot-api';
-import { useSpaceStore } from '@coze-foundation/space-store';
-import { cozeMitt, type RefreshFavListParams } from '@coze-common/coze-mitt';
-import { CustomError } from '@coze-arch/bot-error';
-import { Space, Loading } from '@coze-arch/coze-design';
 
 import { FavoritesListItem } from './favorites-list-item';
 

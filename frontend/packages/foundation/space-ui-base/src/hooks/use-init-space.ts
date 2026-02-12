@@ -18,13 +18,13 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
+import { useSpaceStore } from '@coze-foundation/space-store';
+import { localStorageService } from '@coze-foundation/local-storage';
 import { REPORT_EVENTS as ReportEventNames } from '@coze-arch/report-events';
 import { useErrorHandler, reporter } from '@coze-arch/logger';
 import { I18n } from '@coze-arch/i18n';
 import { Toast } from '@coze-arch/coze-design';
 import { CustomError } from '@coze-arch/bot-error';
-import { localStorageService } from '@coze-foundation/local-storage';
-import { useSpaceStore } from '@coze-foundation/space-store';
 
 const getFallbackWorkspaceURL = async (
   fallbackSpaceID: string,
@@ -65,7 +65,7 @@ export const useInitSpace = ({
           space: store.space,
           spaceListLoading: store.loading,
           spaceList: store.spaceList,
-        } as const),
+        }) as const,
     ),
   );
 

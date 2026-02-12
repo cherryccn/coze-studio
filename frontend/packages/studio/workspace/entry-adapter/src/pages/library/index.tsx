@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { type FC, useRef } from 'react';
+import React, { type FC, useRef } from 'react';
 
 import {
   BaseLibraryPage,
@@ -58,7 +58,9 @@ export const LibraryPage: FC<{ spaceId: string }> = ({ spaceId }) => {
         ]}
       />
       {pluginModals}
-      {workflowModals}
+      {workflowModals?.map?.((modal, index) => (
+        <React.Fragment key={`workflow-modal-${index}`}>{modal}</React.Fragment>
+      )) ?? workflowModals}
       {promptModals}
       {databaseModals}
       {knowledgeModals}

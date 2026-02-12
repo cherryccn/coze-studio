@@ -1,0 +1,9 @@
+{
+  "extends": "@coze-arch/ts-config/tsconfig.react.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.stories.tsx", "**/*.test.tsx"]
+}

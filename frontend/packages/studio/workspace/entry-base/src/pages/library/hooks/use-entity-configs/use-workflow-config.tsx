@@ -69,6 +69,7 @@ export const useWorkflowConfig: UseEntityConfigHook = ({
       renderCreateMenu: () => (
         <>
           <Menu.Item
+            key="workflow"
             data-testid="workspace.library.header.create.workflow"
             icon={<IconCozWorkflow />}
             onClick={() => {
@@ -78,6 +79,7 @@ export const useWorkflowConfig: UseEntityConfigHook = ({
             {I18n.t('library_resource_type_workflow')}
           </Menu.Item>
           <Menu.Item
+            key="chatflow"
             data-testid="workspace.library.header.create.chatflow"
             icon={<IconCozChat />}
             onClick={() => {

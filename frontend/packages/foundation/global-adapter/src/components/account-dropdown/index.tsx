@@ -41,9 +41,10 @@ export const AccountDropdown = () => {
   return (
     <GlobalLayoutAccountDropdown
       menus={[
-        <UserInfoMenu />,
-        <Dropdown.Divider />,
+        <UserInfoMenu key="user-info" />,
+        <Dropdown.Divider key="divider-1" />,
         {
+          key: 'api-auth',
           prefixIcon: <IconCozExit />,
           title: I18n.t('settings_api_authorization'),
           onClick: () => {
@@ -52,6 +53,7 @@ export const AccountDropdown = () => {
           dataTestId: 'layout_avatar_api-auth',
         },
         {
+          key: 'account-settings',
           prefixIcon: <IconCozSetting />,
           title: I18n.t('navi_bar_account_settings'),
           onClick: () => {
@@ -59,8 +61,9 @@ export const AccountDropdown = () => {
           },
           dataTestId: 'layout_avatar_profile-settings',
         },
-        <Dropdown.Divider />,
+        <Dropdown.Divider key="divider-2" />,
         {
+          key: 'logout',
           prefixIcon: <IconCozExit />,
           title: I18n.t('basic_log_out'),
           onClick: () => {

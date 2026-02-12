@@ -471,6 +471,31 @@
       "tags": ["level-3"]
     },
     {
+      "packageName": "@coze-edu/script-library",
+      "projectFolder": "frontend/packages/edu-script",
+      "tags": ["level-3"]
+    },
+    {
+      "packageName": "@coze-edu/common",
+      "projectFolder": "frontend/packages/edu-common",
+      "tags": ["level-2"]
+    },
+    {
+      "packageName": "@coze-edu/learning",
+      "projectFolder": "frontend/packages/edu-learning",
+      "tags": ["level-3"]
+    },
+    {
+      "packageName": "@coze-edu/teacher",
+      "projectFolder": "frontend/packages/edu-teacher",
+      "tags": ["level-3"]
+    },
+    {
+      "packageName": "@coze-edu/student",
+      "projectFolder": "frontend/packages/edu-student",
+      "tags": ["level-3"]
+    },
+    {
       "packageName": "@coze-workflow/test-run",
       "projectFolder": "frontend/packages/workflow/test-run",
       "tags": ["level-3"]

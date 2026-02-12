@@ -13,10 +13,12 @@
     "test:cov": "npm run test -- --coverage"
   },
   "dependencies": {
+    "@coze-arch/bot-api": "workspace:*",
     "@coze-arch/bot-hooks": "workspace:*",
     "@coze-arch/coze-design": "0.0.6-alpha.346d77",
     "@coze-arch/i18n": "workspace:*",
     "@coze-arch/idl": "workspace:*",
+    "@coze-common/biz-components": "workspace:*",
     "@coze-foundation/space-store": "workspace:*",
     "@coze-foundation/space-ui-base": "workspace:*",
     "react-router-dom": "^6.22.0"

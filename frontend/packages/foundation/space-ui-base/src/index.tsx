@@ -18,7 +18,16 @@ export { WorkspaceSubMenu } from './components/workspace-sub-menu';
 export { SpaceIdLayout } from './components/space-id-layout';
 // [新增导出] 空间切换下拉菜单组件
 export { SpaceSwitcherDropdown } from './components/space-switcher-dropdown';
+// [新增导出] 垂直侧边导航菜单组件
+export { VerticalSidebarMenu } from './components/vertical-sidebar-menu';
+export type {
+  MenuItem,
+  MenuGroup,
+  VerticalSidebarMenuProps,
+} from './components/vertical-sidebar-menu';
 
 export { useInitSpace } from './hooks/use-init-space';
 
-// 阿斯蒂芬撒旦飞洒地方
+// [新增导出] SpaceType 枚举，供其他包使用
+export { SpaceType } from '@coze-arch/bot-api/developer_api';
+

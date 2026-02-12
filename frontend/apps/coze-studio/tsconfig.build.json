@@ -88,6 +88,18 @@
       "path": "../../packages/community/explore/tsconfig.build.json"
     },
     {
+      "path": "../../packages/edu-common/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/edu-learning/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/edu-script/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/edu-teacher/tsconfig.build.json"
+    },
+    {
       "path": "../../packages/foundation/account-adapter/tsconfig.build.json"
     },
     {

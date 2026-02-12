@@ -304,6 +304,36 @@ struct GetSpaceListV2Response {
     255: required base.BaseResp BaseResp
 }
 
+struct SpaceConfigV2 {
+    1: optional bool enable_workflow  // Enable workflow
+}
+
+struct SaveSpaceV2Request {
+    1: optional i64    space_id (api.js_conv='true',agw.js_conv="str") // Space id
+    2: required string name           // Space name
+    3: required string description    // Space description
+    4: required string icon_uri       // Space icon URI
+    5: required SpaceType space_type  // Space type
+    6: optional SpaceMode space_mode  // Space mode
+    7: optional SpaceConfigV2 space_config // Space config
+    8: optional i64    enterprise_id (api.js_conv='true',agw.js_conv="str") // Enterprise ID
+    9: optional i64    organization_id (api.js_conv='true',agw.js_conv="str") // Organization id
+
+    255: optional base.Base Base (api.none="true")
+}
+
+struct SaveSpaceRet {
+    1: optional i64 id (api.js_conv='true',agw.js_conv="str") // Space id
+    2: optional bool check_not_pass // true: Machine audit failed
+}
+
+struct SaveSpaceV2Response {
+    1:   optional SaveSpaceRet data
+    253: required i64    code
+    254: required string msg
+    255: required base.BaseResp BaseResp
+}
+
 struct GetImagexShortUrlResponse{
     1             :      GetImagexShortUrlData data
     253: required i64    code
@@ -472,6 +502,7 @@ service PlaygroundService {
     prompt_resource.DeletePromptResourceResponse DeletePromptResource(1:prompt_resource.DeletePromptResourceRequest request)(api.post='/api/playground_api/delete_prompt_resource', api.category="prompt_resource",agw.preserve_base="true")
 
     GetSpaceListV2Response GetSpaceListV2(1:GetSpaceListV2Request request)(api.post='/api/playground_api/space/list', api.category="space",agw.preserve_base="true")
+    SaveSpaceV2Response SaveSpaceV2(1:SaveSpaceV2Request request)(api.post='/api/playground_api/space/save', api.category="space",agw.preserve_base="true")
     MGetUserBasicInfoResponse MGetUserBasicInfo(1: MGetUserBasicInfoRequest request) (api.post='/api/playground_api/mget_user_info', api.category="playground_api",agw.preserve_base="true")
 
 }

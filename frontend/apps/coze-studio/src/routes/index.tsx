@@ -45,6 +45,16 @@ import {
   DatabaseDetail,
   ExplorePluginPage,
   ExploreTemplatePage,
+  EduScriptListPage,
+  EduScriptDetailPage,
+  EduLearningCenter,
+  EduScriptLearning,
+  EduMyProjects,
+  EduTeacherClassList,
+  EduTeacherClassDetail,
+  EduStudentJoinClass,
+  EduStudentClassList,
+  EduStudentClassDetail,
 } from './async-components';
 
 export const router: ReturnType<typeof createBrowserRouter> =
@@ -112,7 +122,16 @@ export const router: ReturnType<typeof createBrowserRouter> =
               children: [
                 {
                   index: true,
-                  element: <Navigate to="develop" replace />,
+                  element: <Navigate to="home" replace />,
+                },
+
+                // Home page
+                {
+                  path: 'home',
+                  Component: Develop,
+                  loader: () => ({
+                    subMenuKey: 'home',
+                  }),
                 },
 
                 // Project Development
@@ -231,6 +250,71 @@ export const router: ReturnType<typeof createBrowserRouter> =
                           Component: PluginToolPage,
                         },
                       ],
+                    },
+                  ],
+                },
+
+                // Education Platform
+                {
+                  path: 'edu',
+                  Component: null,
+                  loader: () => ({
+                    subMenuKey: SpaceSubModuleEnum.EDUCATION,
+                  }),
+                  children: [
+                    {
+                      index: true,
+                      element: <Navigate to="learning-center" replace />,
+                    },
+                    // Learning center (main entry)
+                    {
+                      path: 'learning-center',
+                      element: <EduLearningCenter />,
+                    },
+                    // My projects
+                    {
+                      path: 'my-projects',
+                      element: <EduMyProjects />,
+                    },
+                    // Script learning workspace
+                    {
+                      path: 'projects/:projectId/script-learning',
+                      element: <EduScriptLearning />,
+                    },
+                    // Script library list (legacy, for backward compatibility)
+                    {
+                      path: 'scripts',
+                      element: <EduScriptListPage />,
+                    },
+                    // Script detail (legacy)
+                    {
+                      path: 'scripts/:id',
+                      element: <EduScriptDetailPage />,
+                    },
+                    // Teacher - Class management
+                    {
+                      path: 'teacher/classes',
+                      element: <EduTeacherClassList />,
+                    },
+                    // Teacher - Class detail
+                    {
+                      path: 'teacher/classes/:class_id',
+                      element: <EduTeacherClassDetail />,
+                    },
+                    // Student - Join class
+                    {
+                      path: 'student/join',
+                      element: <EduStudentJoinClass />,
+                    },
+                    // Student - Class list
+                    {
+                      path: 'student/classes',
+                      element: <EduStudentClassList />,
+                    },
+                    // Student - Class detail
+                    {
+                      path: 'student/classes/:class_id',
+                      element: <EduStudentClassDetail />,
                     },
                   ],
                 },

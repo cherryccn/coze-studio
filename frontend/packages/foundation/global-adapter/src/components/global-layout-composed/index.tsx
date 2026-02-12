@@ -18,6 +18,7 @@ import { useParams } from 'react-router-dom';
 import { type FC, type PropsWithChildren } from 'react';
 
 import { GlobalLayout } from '@coze-foundation/layout';
+import { VerticalSidebarMenuAdapter } from '@coze-foundation/space-ui-adapter';
 import { useCreateBotAction } from '@coze-foundation/global';
 import { RequireAuthContainer } from '@coze-foundation/account-ui-adapter';
 import { I18n } from '@coze-arch/i18n';
@@ -34,6 +35,9 @@ import {
 import { AccountDropdown } from '../account-dropdown';
 import { useHasSider } from './hooks/use-has-sider';
 
+// 启用新的垂直侧边栏菜单
+const USE_VERTICAL_SIDEBAR = true;
+
 export const GlobalLayoutComposed: FC<PropsWithChildren> = ({ children }) => {
   const config = useRouteConfig();
   const hasSider = useHasSider();
@@ -43,6 +47,28 @@ export const GlobalLayoutComposed: FC<PropsWithChildren> = ({ children }) => {
     currentSpaceId: space_id,
   });
 
+  // 如果启用新的垂直侧边栏且需要侧边栏
+  if (USE_VERTICAL_SIDEBAR && hasSider) {
+    return (
+      <RequireAuthContainer
+        needLogin={!!config.requireAuth}
+        loginOptional={!!config.requireAuthOptional}
+      >
+        <div className="flex h-screen w-screen overflow-hidden coz-bg-plus">
+          {/* 新的垂直侧边导航菜单 */}
+          <VerticalSidebarMenuAdapter onCreateClick={createBot} />
+
+          {/* 主内容区域 */}
+          <div className="flex-1 overflow-auto">
+            {children}
+            {createBotModal}
+          </div>
+        </div>
+      </RequireAuthContainer>
+    );
+  }
+
+  // 使用原来的布局（兼容旧版本）
   return (
     <RequireAuthContainer
       needLogin={!!config.requireAuth}

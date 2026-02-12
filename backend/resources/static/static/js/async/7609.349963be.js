@@ -1,0 +1,18 @@
+/*
+ * Copyright 2025 coze-dev Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+"use strict";(self.webpackChunk_coze_studio_app=self.webpackChunk_coze_studio_app||[]).push([["7609"],{534975:function(n,a,e){e.r(a);let o=Object.freeze(JSON.parse('{"displayName":"JSSM","fileTypes":["jssm","jssm_state"],"name":"jssm","patterns":[{"begin":"/\\\\*","captures":{"0":{"name":"punctuation.definition.comment.mn"}},"end":"\\\\*/","name":"comment.block.jssm"},{"begin":"//","end":"$","name":"comment.line.jssm"},{"begin":"\\\\$\\\\{","captures":{"0":{"name":"entity.name.function"}},"end":"}","name":"keyword.other"},{"match":"([0-9]*)(\\\\.)([0-9]*)(\\\\.)([0-9]*)","name":"constant.numeric"},{"match":"graph_layout(\\\\s*)(:)","name":"constant.language.jssmLanguage"},{"match":"machine_name(\\\\s*)(:)","name":"constant.language.jssmLanguage"},{"match":"machine_version(\\\\s*)(:)","name":"constant.language.jssmLanguage"},{"match":"jssm_version(\\\\s*)(:)","name":"constant.language.jssmLanguage"},{"match":"<->","name":"keyword.control.transition.jssmArrow.legal_legal"},{"match":"<-","name":"keyword.control.transition.jssmArrow.legal_none"},{"match":"->","name":"keyword.control.transition.jssmArrow.none_legal"},{"match":"<=>","name":"keyword.control.transition.jssmArrow.main_main"},{"match":"=>","name":"keyword.control.transition.jssmArrow.none_main"},{"match":"<=","name":"keyword.control.transition.jssmArrow.main_none"},{"match":"<~>","name":"keyword.control.transition.jssmArrow.forced_forced"},{"match":"~>","name":"keyword.control.transition.jssmArrow.none_forced"},{"match":"<~","name":"keyword.control.transition.jssmArrow.forced_none"},{"match":"<-=>","name":"keyword.control.transition.jssmArrow.legal_main"},{"match":"<=->","name":"keyword.control.transition.jssmArrow.main_legal"},{"match":"<-~>","name":"keyword.control.transition.jssmArrow.legal_forced"},{"match":"<~->","name":"keyword.control.transition.jssmArrow.forced_legal"},{"match":"<=~>","name":"keyword.control.transition.jssmArrow.main_forced"},{"match":"<~=>","name":"keyword.control.transition.jssmArrow.forced_main"},{"match":"([0-9]+)%","name":"constant.numeric.jssmProbability"},{"match":"\'[^\']*\'","name":"constant.character.jssmAction"},{"match":"\\"[^\\"]*\\"","name":"entity.name.tag.jssmLabel.doublequoted"},{"match":"([!#\\\\&()+,.0-9?-Z_a-z])","name":"entity.name.tag.jssmLabel.atom"}],"scopeName":"source.jssm","aliases":["fsl"]}'));a.default=[o]}}]);
+//# sourceMappingURL=7609.349963be.js.map

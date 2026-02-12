@@ -499,6 +499,40 @@ func (u *userImpl) GetUserSpaceBySpaceID(ctx context.Context, spaceID []int64) (
 	}), nil
 }
 
+func (u *userImpl) CreateSpace(ctx context.Context, req *CreateSpaceRequest) (resp *CreateSpaceResponse, err error) {
+	// Create the space model
+	spaceModel := &model.Space{
+		Name:        req.Name,
+		Description: req.Description,
+		IconURI:     req.IconURI,
+		OwnerID:     req.OwnerID,
+		CreatorID:   req.CreatorID,
+	}
+
+	// Create the space in database
+	err = u.SpaceRepo.CreateSpace(ctx, spaceModel)
+	if err != nil {
+		return nil, err
+	}
+
+	// Add the creator as an owner to the space
+	// RoleType: 1=owner, 2=admin, 3=member (based on database schema)
+	spaceUser := &model.SpaceUser{
+		SpaceID:  spaceModel.ID,
+		UserID:   req.CreatorID,
+		RoleType: 1, // Owner role
+	}
+
+	err = u.SpaceRepo.AddSpaceUser(ctx, spaceUser)
+	if err != nil {
+		return nil, err
+	}
+
+	return &CreateSpaceResponse{
+		SpaceID: spaceModel.ID,
+	}, nil
+}
+
 func spacePo2Do(space *model.Space, iconUrl string) *userEntity.Space {
 	return &userEntity.Space{
 		ID:          space.ID,
