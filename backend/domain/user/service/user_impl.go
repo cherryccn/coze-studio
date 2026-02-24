@@ -500,11 +500,19 @@ func (u *userImpl) GetUserSpaceBySpaceID(ctx context.Context, spaceID []int64) (
 }
 
 func (u *userImpl) CreateSpace(ctx context.Context, req *CreateSpaceRequest) (resp *CreateSpaceResponse, err error) {
+	// Generate space ID
+	spaceID, err := u.IDGen.GenID(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("gen space_id failed: %w", err)
+	}
+
 	// Create the space model
 	spaceModel := &model.Space{
+		ID:          spaceID,
 		Name:        req.Name,
 		Description: req.Description,
 		IconURI:     req.IconURI,
+		SpaceType:   int32(req.SpaceType),
 		OwnerID:     req.OwnerID,
 		CreatorID:   req.CreatorID,
 	}
@@ -539,7 +547,7 @@ func spacePo2Do(space *model.Space, iconUrl string) *userEntity.Space {
 		Name:        space.Name,
 		Description: space.Description,
 		IconURL:     iconUrl,
-		SpaceType:   userEntity.SpaceTypePersonal,
+		SpaceType:   userEntity.SpaceType(space.SpaceType),
 		OwnerID:     space.OwnerID,
 		CreatorID:   space.CreatorID,
 		CreatedAt:   space.CreatedAt,

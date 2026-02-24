@@ -3571,9 +3571,15 @@ table "space" {
   }
   column "icon_uri" {
     null    = false
-    type    = varchar(200)
+    type    = varchar(500)
     default = ""
     comment = "Icon URI"
+  }
+  column "space_type" {
+    null    = false
+    type    = int
+    default = 1
+    comment = "Space Type: 1=Personal, 2=Team"
   }
   column "creator_id" {
     null     = false

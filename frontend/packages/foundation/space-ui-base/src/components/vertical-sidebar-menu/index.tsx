@@ -14,17 +14,63 @@
  * limitations under the License.
  */
 
-import React, { useMemo } from 'react';
-import { Space, Avatar, Typography, Button } from '@coze-arch/coze-design';
+import React, { useMemo, useState } from 'react';
+
+import cls from 'classnames';
+import { I18n } from '@coze-arch/i18n';
 import {
   IconCozArrowDown,
   IconCozPlus,
+  IconCozPeopleFill,
+  IconCozTeamFill,
 } from '@coze-arch/coze-design/icons';
-import { I18n } from '@coze-arch/i18n';
-import cls from 'classnames';
-import { SpaceType } from '@coze-arch/bot-api/developer_api';
+import { Avatar, Typography, Button } from '@coze-arch/coze-design';
+import { SpaceType, type BotSpace } from '@coze-arch/bot-api/developer_api';
 
 import { SpaceSwitcherDropdown } from '../space-switcher-dropdown';
+
+/** 空间头像组件 - 支持图片加载失败降级 */
+interface SpaceAvatarProps {
+  space?: BotSpace;
+  size?: 'small' | 'large';
+}
+
+const SpaceAvatar: React.FC<SpaceAvatarProps> = ({ space, size = 'small' }) => {
+  const [imageError, setImageError] = useState(false);
+
+  const sizeClass =
+    size === 'large' ? 'w-[24px] h-[24px]' : 'w-[20px] h-[20px]';
+  const roundedClass = size === 'large' ? 'rounded-[6px]' : 'rounded-[4px]';
+  const iconSize = size === 'large' ? 'text-[16px]' : 'text-[14px]';
+
+  // 如果没有图片 URL 或图片加载失败，显示默认图标
+  if (!space?.icon_url || imageError) {
+    const DefaultIcon =
+      space?.space_type === SpaceType.Personal
+        ? IconCozPeopleFill
+        : IconCozTeamFill;
+    return (
+      <div
+        className={cls(
+          sizeClass,
+          roundedClass,
+          'shrink-0 flex items-center justify-center bg-blue-500 text-white',
+        )}
+      >
+        <DefaultIcon className={iconSize} />
+      </div>
+    );
+  }
+
+  // 显示真实图片
+  return (
+    <Avatar
+      className={cls(sizeClass, roundedClass, 'shrink-0')}
+      src={space.icon_url}
+      onError={() => setImageError(true)}
+    />
+  );
+};
 
 export interface MenuItem {
   key: string;
@@ -89,7 +135,10 @@ export const VerticalSidebarMenu: React.FC<VerticalSidebarMenuProps> = ({
   }, []);
 
   const appName = useMemo(() => I18n.t('app_name_coze', {}, '扣子'), []);
-  const createButtonText = useMemo(() => I18n.t('button_create', {}, '创建'), []);
+  const createButtonText = useMemo(
+    () => I18n.t('button_create', {}, '创建'),
+    [],
+  );
   const searchPlaceholder = useMemo(
     () => I18n.t('workspace_search_placeholder', {}, '搜索空间'),
     [],
@@ -126,10 +175,7 @@ export const VerticalSidebarMenu: React.FC<VerticalSidebarMenuProps> = ({
         >
           <div className="cursor-pointer w-full mb-[12px]">
             <div className="h-[40px] px-[12px] w-full hover:coz-bg-secondary rounded-[8px] flex items-center gap-[8px] transition-colors">
-              <Avatar
-                className="w-[20px] h-[20px] rounded-[4px] shrink-0"
-                src={currentSpace?.icon_url}
-              />
+              <SpaceAvatar space={currentSpace} size="small" />
               <Typography.Text
                 ellipsis={{ showTooltip: true, rows: 1 }}
                 className="flex-1 coz-fg-primary text-[14px] font-[500]"
@@ -151,7 +197,7 @@ export const VerticalSidebarMenu: React.FC<VerticalSidebarMenuProps> = ({
           onClick={onCreateClick}
           className="w-full !rounded-[8px] !h-[40px] coz-bg-secondary hover:coz-bg-secondary-hovered"
         >
-          <span className="coz-fg-primary font-[500]">{createButtonText}</span>
+          <span className="text-white font-[500]">{createButtonText}</span>
         </Button>
       </div>
 
@@ -190,9 +236,9 @@ export const VerticalSidebarMenu: React.FC<VerticalSidebarMenuProps> = ({
                     >
                       {item.label}
                     </Typography.Text>
-                    {item.badge && (
+                    {item.badge ? (
                       <span className="w-[6px] h-[6px] rounded-full bg-[#FF6B2C] shrink-0" />
-                    )}
+                    ) : null}
                   </div>
                 );
               })}

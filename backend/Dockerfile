@@ -1,6 +1,6 @@
 # Stage 1: Builder for Go application
-# Using Go 1.24rc1 to meet project requirements
-FROM golang:1.24rc1-alpine AS builder
+# Using Go 1.24 to meet project requirements (fallback to rc1 if stable not available)
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
 
@@ -20,8 +20,8 @@ RUN go mod download
 # Copy the entire backend source code
 COPY backend/ ./
 
-# Update sonic to latest version compatible with Go 1.24
-RUN go get -u github.com/bytedance/sonic@latest && go mod tidy
+# Note: sonic version is already specified in go.mod, no need to update
+# RUN go get -u github.com/bytedance/sonic@latest && go mod tidy
 
 # Build the Go application with CGO disabled and sonic_no_asm tag
 ENV CGO_ENABLED=0

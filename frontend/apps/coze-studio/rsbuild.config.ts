@@ -25,6 +25,7 @@ const API_PROXY_TARGET = `http://localhost:${
 
 const mergedConfig = defineConfig({
   server: {
+    port: 8080,
     strictPort: true,
     proxy: [
       {

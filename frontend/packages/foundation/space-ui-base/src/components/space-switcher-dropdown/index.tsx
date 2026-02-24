@@ -19,9 +19,59 @@ import { type FC, useState, useMemo, useCallback, type ReactNode } from 'react';
 import classNames from 'classnames';
 import { I18n } from '@coze-arch/i18n';
 // [修复] 使用项目中正确的图标库
-import { IconCozPlus } from '@coze-arch/coze-design/icons';
+import {
+  IconCozPlus,
+  IconCozPeopleFill,
+  IconCozTeamFill,
+} from '@coze-arch/coze-design/icons';
 import { Dropdown, Avatar, Typography, Button } from '@coze-arch/coze-design';
 import { type BotSpace, SpaceType } from '@coze-arch/bot-api/developer_api';
+
+/** 空间头像组件 - 支持图片加载失败降级 */
+interface SpaceAvatarProps {
+  iconUrl?: string;
+  spaceType?: SpaceType;
+  size?: 'small' | 'large';
+}
+
+const SpaceAvatar: FC<SpaceAvatarProps> = ({
+  iconUrl,
+  spaceType,
+  size = 'large',
+}) => {
+  const [imageError, setImageError] = useState(false);
+
+  const sizeClass =
+    size === 'large' ? 'w-[24px] h-[24px]' : 'w-[20px] h-[20px]';
+  const roundedClass = size === 'large' ? 'rounded-[6px]' : 'rounded-[4px]';
+  const iconSize = size === 'large' ? 'text-[16px]' : 'text-[14px]';
+
+  // 如果没有图片 URL 或图片加载失败，显示默认图标
+  if (!iconUrl || imageError) {
+    const DefaultIcon =
+      spaceType === SpaceType.Personal ? IconCozPeopleFill : IconCozTeamFill;
+    return (
+      <div
+        className={classNames(
+          sizeClass,
+          roundedClass,
+          'shrink-0 flex items-center justify-center bg-blue-500 text-white',
+        )}
+      >
+        <DefaultIcon className={iconSize} />
+      </div>
+    );
+  }
+
+  // 显示真实图片
+  return (
+    <Avatar
+      className={classNames(sizeClass, roundedClass, 'shrink-0')}
+      src={iconUrl}
+      onError={() => setImageError(true)}
+    />
+  );
+};
 
 interface SpaceSwitcherDropdownProps {
   /** 当前空间信息 */
@@ -88,9 +138,10 @@ const DropdownContent: FC<DropdownContentProps> = ({
           )}
           onClick={() => personalSpace.id && onSpaceClick(personalSpace.id)}
         >
-          <Avatar
-            className="w-[24px] h-[24px] rounded-[6px] shrink-0"
-            src={personalSpace.icon_url}
+          <SpaceAvatar
+            iconUrl={personalSpace.icon_url}
+            spaceType={personalSpace.space_type}
+            size="large"
           />
           <Typography.Text
             ellipsis={{ showTooltip: true, rows: 1 }}
@@ -117,9 +168,10 @@ const DropdownContent: FC<DropdownContentProps> = ({
               )}
               onClick={() => space.id && onSpaceClick(space.id)}
             >
-              <Avatar
-                className="w-[24px] h-[24px] rounded-[6px] shrink-0"
-                src={space.icon_url}
+              <SpaceAvatar
+                iconUrl={space.icon_url}
+                spaceType={space.space_type}
+                size="large"
               />
               <Typography.Text
                 ellipsis={{ showTooltip: true, rows: 1 }}
@@ -153,15 +205,16 @@ const DropdownContent: FC<DropdownContentProps> = ({
     {onAddSpaceClick ? (
       <div className="px-[12px] py-[8px] border-t coz-stroke-primary">
         <Button
-          className="w-full"
-          color="secondary"
+          theme="light"
+          size="large"
+          className="w-full !rounded-[8px] !h-[40px] coz-bg-secondary hover:coz-bg-secondary-hovered"
           icon={<IconCozPlus />}
           onClick={e => {
             e.stopPropagation();
             onAddSpaceClick();
           }}
         >
-          {addSpaceText}
+          <span className="text-white font-[500]">{addSpaceText}</span>
         </Button>
       </div>
     ) : null}
