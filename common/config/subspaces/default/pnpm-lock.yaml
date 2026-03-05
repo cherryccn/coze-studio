@@ -54,12 +54,18 @@ importers:
       '@coze-agent-ide/layout-adapter':
         specifier: workspace:*
         version: link:../../packages/agent-ide/layout-adapter
+      '@coze-arch/bot-api':
+        specifier: workspace:*
+        version: link:../../packages/arch/bot-api
       '@coze-arch/bot-flags':
         specifier: workspace:*
         version: link:../../packages/arch/bot-flags
       '@coze-arch/bot-md-box-adapter':
         specifier: workspace:*
         version: link:../../packages/arch/bot-md-box-adapter
+      '@coze-arch/bot-space-api':
+        specifier: workspace:*
+        version: link:../../packages/arch/bot-space-api
       '@coze-arch/coze-design':
         specifier: 0.0.7-alpha.985c0d
         version: 0.0.7-alpha.985c0d(@types/react@18.2.37)(acorn@8.15.0)(react-dom@18.2.0)(react@18.2.0)
@@ -93,6 +99,9 @@ importers:
       '@coze-foundation/layout':
         specifier: workspace:*
         version: link:../../packages/foundation/layout
+      '@coze-foundation/space-store-adapter':
+        specifier: workspace:*
+        version: link:../../packages/foundation/space-store-adapter
       '@coze-foundation/space-ui-adapter':
         specifier: workspace:*
         version: link:../../packages/foundation/space-ui-adapter
@@ -17317,6 +17326,9 @@ importers:
       '@coze-common/biz-components':
         specifier: workspace:*
         version: link:../../common/biz-components
+      '@coze-foundation/account-ui-adapter':
+        specifier: workspace:*
+        version: link:../account-ui-adapter
       '@coze-foundation/space-store':
         specifier: workspace:*
         version: link:../space-store

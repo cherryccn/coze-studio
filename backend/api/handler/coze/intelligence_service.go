@@ -21,6 +21,7 @@ package coze
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -32,7 +33,29 @@ import (
 	task "github.com/coze-dev/coze-studio/backend/api/model/app/intelligence/task"
 	appApplication "github.com/coze-dev/coze-studio/backend/application/app"
 	"github.com/coze-dev/coze-studio/backend/application/search"
+	singleAgentApplication "github.com/coze-dev/coze-studio/backend/application/singleagent"
 )
+
+type publishIntelligenceUnListRequest struct {
+	IntelligenceID   string                  `json:"intelligence_id"`
+	ConnectorIDs     []string                `json:"connector_ids"`
+	IntelligenceType common.IntelligenceType `json:"intelligence_type"`
+}
+
+type publishIntelligenceUnListResult struct {
+	IsSuccess  bool   `json:"is_success"`
+	FailReason string `json:"fail_reason,omitempty"`
+}
+
+type publishIntelligenceUnListData struct {
+	ConnectorUnlistResultMap map[string]*publishIntelligenceUnListResult `json:"connector_unlist_result_map"`
+}
+
+type publishIntelligenceUnListResponse struct {
+	Data *publishIntelligenceUnListData `json:"data,omitempty"`
+	Code int64                          `json:"code"`
+	Msg  string                         `json:"msg"`
+}
 
 // GetDraftIntelligenceList .
 // @router /api/intelligence_api/search/get_draft_intelligence_list [POST]
@@ -262,6 +285,74 @@ func PublishProject(ctx context.Context, c *app.RequestContext) {
 	}
 
 	c.JSON(consts.StatusOK, resp)
+}
+
+// PublishIntelligenceUnList .
+// @router /api/intelligence_api/publish/publish_intelligence_unlist [POST]
+func PublishIntelligenceUnList(ctx context.Context, c *app.RequestContext) {
+	var req publishIntelligenceUnListRequest
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		invalidParamRequestResponse(c, err.Error())
+		return
+	}
+
+	if req.IntelligenceType != common.IntelligenceType_Bot {
+		invalidParamRequestResponse(c, fmt.Sprintf("invalid intelligence type '%d'", req.IntelligenceType))
+		return
+	}
+
+	if req.IntelligenceID == "" {
+		invalidParamRequestResponse(c, "invalid intelligence id")
+		return
+	}
+
+	intelligenceID, err := strconv.ParseInt(req.IntelligenceID, 10, 64)
+	if err != nil || intelligenceID <= 0 {
+		invalidParamRequestResponse(c, "invalid intelligence id")
+		return
+	}
+
+	if len(req.ConnectorIDs) == 0 {
+		invalidParamRequestResponse(c, "invalid connector ids")
+		return
+	}
+
+	connectorIDs := make([]int64, 0, len(req.ConnectorIDs))
+	for _, connectorID := range req.ConnectorIDs {
+		id, parseErr := strconv.ParseInt(connectorID, 10, 64)
+		if parseErr != nil || id <= 0 {
+			invalidParamRequestResponse(c, "invalid connector id")
+			return
+		}
+		connectorIDs = append(connectorIDs, id)
+	}
+
+	result, err := singleAgentApplication.SingleAgentSVC.UnpublishAgent(ctx, intelligenceID, connectorIDs)
+	if err != nil {
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+
+	resultMap := make(map[string]*publishIntelligenceUnListResult, len(connectorIDs))
+	for _, connectorID := range connectorIDs {
+		ok := result[connectorID]
+		item := &publishIntelligenceUnListResult{
+			IsSuccess: ok,
+		}
+		if !ok {
+			item.FailReason = "connector not published"
+		}
+		resultMap[strconv.FormatInt(connectorID, 10)] = item
+	}
+
+	c.JSON(consts.StatusOK, &publishIntelligenceUnListResponse{
+		Data: &publishIntelligenceUnListData{
+			ConnectorUnlistResultMap: resultMap,
+		},
+		Code: 0,
+		Msg:  "success",
+	})
 }
 
 // GetPublishRecordList .

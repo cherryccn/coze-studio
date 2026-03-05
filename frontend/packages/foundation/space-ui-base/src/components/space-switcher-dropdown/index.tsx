@@ -43,33 +43,43 @@ const SpaceAvatar: FC<SpaceAvatarProps> = ({
 
   const sizeClass =
     size === 'large' ? 'w-[24px] h-[24px]' : 'w-[20px] h-[20px]';
+  const innerSizeClass =
+    size === 'large' ? 'w-[20px] h-[20px]' : 'w-[16px] h-[16px]';
   const roundedClass = size === 'large' ? 'rounded-[6px]' : 'rounded-[4px]';
+  const innerRoundedClass =
+    size === 'large' ? 'rounded-[5px]' : 'rounded-[3px]';
   const iconSize = size === 'large' ? 'text-[16px]' : 'text-[14px]';
+  const isDefaultIcon =
+    Boolean(iconUrl) &&
+    (iconUrl?.includes('/default_icon/') ||
+      iconUrl?.includes('team_default_icon'));
+  const bgClass =
+    spaceType === SpaceType.Personal ? 'bg-blue-500' : 'bg-[#FF6B2C]';
 
-  // 如果没有图片 URL 或图片加载失败，显示默认图标
-  if (!iconUrl || imageError) {
-    const DefaultIcon =
-      spaceType === SpaceType.Personal ? IconCozPeopleFill : IconCozTeamFill;
-    return (
-      <div
-        className={classNames(
-          sizeClass,
-          roundedClass,
-          'shrink-0 flex items-center justify-center bg-blue-500 text-white',
-        )}
-      >
-        <DefaultIcon className={iconSize} />
-      </div>
-    );
-  }
+  const DefaultIcon =
+    spaceType === SpaceType.Personal ? IconCozPeopleFill : IconCozTeamFill;
+  const shouldUseFallback = !iconUrl || imageError || isDefaultIcon;
 
-  // 显示真实图片
+  // 统一使用带背景的容器，保持个人/团队空间颜色区分
   return (
-    <Avatar
-      className={classNames(sizeClass, roundedClass, 'shrink-0')}
-      src={iconUrl}
-      onError={() => setImageError(true)}
-    />
+    <div
+      className={classNames(
+        sizeClass,
+        roundedClass,
+        'shrink-0 flex items-center justify-center text-white',
+        bgClass,
+      )}
+    >
+      {shouldUseFallback ? (
+        <DefaultIcon className={iconSize} />
+      ) : (
+        <Avatar
+          className={classNames(innerSizeClass, innerRoundedClass)}
+          src={iconUrl}
+          onError={() => setImageError(true)}
+        />
+      )}
+    </div>
   );
 };
 

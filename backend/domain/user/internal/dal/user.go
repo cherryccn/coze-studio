@@ -19,6 +19,8 @@ package dal
 import (
 	"context"
 	"errors"
+	"strconv"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -159,4 +161,66 @@ func (dao *UserDAO) GetUsersByIDs(ctx context.Context, userIDs []int64) ([]*mode
 	return dao.query.User.WithContext(ctx).Where(
 		dao.query.User.ID.In(userIDs...),
 	).Find()
+}
+
+func (dao *UserDAO) SearchUsers(ctx context.Context, keywords []string, page, size int) (users []*model.User, total int64, err error) {
+	if page <= 0 {
+		page = 1
+	}
+	if size <= 0 {
+		size = 50
+	}
+	if size > 200 {
+		size = 200
+	}
+
+	normalized := make([]string, 0, len(keywords))
+	seen := make(map[string]struct{}, len(keywords))
+	for _, keyword := range keywords {
+		trimmed := strings.TrimSpace(keyword)
+		if trimmed == "" {
+			continue
+		}
+
+		lower := strings.ToLower(trimmed)
+		if _, ok := seen[lower]; ok {
+			continue
+		}
+		seen[lower] = struct{}{}
+		normalized = append(normalized, trimmed)
+	}
+
+	db := dao.query.User.WithContext(ctx).UnderlyingDB().Model(&model.User{})
+	if len(normalized) > 0 {
+		conditions := make([]string, 0, len(normalized))
+		args := make([]interface{}, 0, len(normalized)*4)
+		for _, keyword := range normalized {
+			pattern := "%" + keyword + "%"
+			keywordConditions := []string{"name LIKE ?", "unique_name LIKE ?", "email LIKE ?"}
+			keywordArgs := []interface{}{pattern, pattern, pattern}
+			if userID, parseErr := strconv.ParseInt(keyword, 10, 64); parseErr == nil {
+				keywordConditions = append(keywordConditions, "id = ?")
+				keywordArgs = append(keywordArgs, userID)
+			}
+
+			conditions = append(conditions, "("+strings.Join(keywordConditions, " OR ")+")")
+			args = append(args, keywordArgs...)
+		}
+		db = db.Where(strings.Join(conditions, " OR "), args...)
+	}
+
+	if err = db.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	users = make([]*model.User, 0)
+	err = db.Order("updated_at DESC, id DESC").
+		Offset((page - 1) * size).
+		Limit(size).
+		Find(&users).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return users, total, nil
 }

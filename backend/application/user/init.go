@@ -25,6 +25,7 @@ import (
 	"github.com/coze-dev/coze-studio/backend/domain/user/service"
 	"github.com/coze-dev/coze-studio/backend/infra/idgen"
 	"github.com/coze-dev/coze-studio/backend/infra/storage"
+	"github.com/coze-dev/coze-studio/backend/pkg/kvstore"
 )
 
 func InitService(ctx context.Context, db *gorm.DB, oss storage.Storage, idgen idgen.IDGenerator) *UserApplicationService {
@@ -35,6 +36,9 @@ func InitService(ctx context.Context, db *gorm.DB, oss storage.Storage, idgen id
 		SpaceRepo: repository.NewSpaceRepo(db),
 	})
 	UserApplicationSVC.oss = oss
+	UserApplicationSVC.inviteLinkKV = kvstore.New[spaceInviteLinkState](db)
+	UserApplicationSVC.inviteRecordKV = kvstore.New[spaceInviteRecordState](db)
+	UserApplicationSVC.spaceConfigKV = kvstore.New[spaceConfigState](db)
 
 	return UserApplicationSVC
 }

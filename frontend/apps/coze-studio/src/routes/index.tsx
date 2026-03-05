@@ -37,6 +37,8 @@ import {
   ProjectIDE,
   ProjectIDEPublish,
   Library,
+  TaskCenter,
+  SpaceConfigPage,
   PluginLayout,
   PluginToolPage,
   PluginPage,
@@ -197,6 +199,24 @@ export const router: ReturnType<typeof createBrowserRouter> =
                   Component: Library,
                   loader: () => ({
                     subMenuKey: SpaceSubModuleEnum.LIBRARY,
+                  }),
+                },
+
+                // task center
+                {
+                  path: 'task',
+                  Component: TaskCenter,
+                  loader: () => ({
+                    subMenuKey: 'task',
+                  }),
+                },
+
+                // space config
+                {
+                  path: 'config',
+                  Component: SpaceConfigPage,
+                  loader: () => ({
+                    subMenuKey: 'config',
                   }),
                 },
 

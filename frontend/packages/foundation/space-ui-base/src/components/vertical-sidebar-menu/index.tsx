@@ -23,6 +23,7 @@ import {
   IconCozPlus,
   IconCozPeopleFill,
   IconCozTeamFill,
+  IconCozExit,
 } from '@coze-arch/coze-design/icons';
 import { Avatar, Typography, Button } from '@coze-arch/coze-design';
 import { SpaceType, type BotSpace } from '@coze-arch/bot-api/developer_api';
@@ -40,35 +41,45 @@ const SpaceAvatar: React.FC<SpaceAvatarProps> = ({ space, size = 'small' }) => {
 
   const sizeClass =
     size === 'large' ? 'w-[24px] h-[24px]' : 'w-[20px] h-[20px]';
+  const innerSizeClass =
+    size === 'large' ? 'w-[20px] h-[20px]' : 'w-[16px] h-[16px]';
   const roundedClass = size === 'large' ? 'rounded-[6px]' : 'rounded-[4px]';
+  const innerRoundedClass =
+    size === 'large' ? 'rounded-[5px]' : 'rounded-[3px]';
   const iconSize = size === 'large' ? 'text-[16px]' : 'text-[14px]';
+  const isDefaultIcon =
+    Boolean(space?.icon_url) &&
+    (space?.icon_url?.includes('/default_icon/') ||
+      space?.icon_url?.includes('team_default_icon'));
+  const bgClass =
+    space?.space_type === SpaceType.Personal ? 'bg-blue-500' : 'bg-[#FF6B2C]';
 
-  // 如果没有图片 URL 或图片加载失败，显示默认图标
-  if (!space?.icon_url || imageError) {
-    const DefaultIcon =
-      space?.space_type === SpaceType.Personal
-        ? IconCozPeopleFill
-        : IconCozTeamFill;
-    return (
-      <div
-        className={cls(
-          sizeClass,
-          roundedClass,
-          'shrink-0 flex items-center justify-center bg-blue-500 text-white',
-        )}
-      >
-        <DefaultIcon className={iconSize} />
-      </div>
-    );
-  }
+  const DefaultIcon =
+    space?.space_type === SpaceType.Personal
+      ? IconCozPeopleFill
+      : IconCozTeamFill;
+  const shouldUseFallback = !space?.icon_url || imageError || isDefaultIcon;
 
-  // 显示真实图片
+  // 统一使用带背景的容器，保持个人/团队空间颜色区分
   return (
-    <Avatar
-      className={cls(sizeClass, roundedClass, 'shrink-0')}
-      src={space.icon_url}
-      onError={() => setImageError(true)}
-    />
+    <div
+      className={cls(
+        sizeClass,
+        roundedClass,
+        'shrink-0 flex items-center justify-center text-white',
+        bgClass,
+      )}
+    >
+      {shouldUseFallback ? (
+        <DefaultIcon className={iconSize} />
+      ) : (
+        <Avatar
+          className={cls(innerSizeClass, innerRoundedClass)}
+          src={space.icon_url}
+          onError={() => setImageError(true)}
+        />
+      )}
+    </div>
   );
 };
 
@@ -113,6 +124,10 @@ export interface VerticalSidebarMenuProps {
   currentMenuKey?: string;
   /** 添加空间回调 */
   onAddSpace?: () => void;
+  /** 退出登录点击回调 */
+  onLogoutClick?: () => void;
+  /** 退出登录按钮文案 */
+  logoutLabel?: string;
 }
 
 export const VerticalSidebarMenu: React.FC<VerticalSidebarMenuProps> = ({
@@ -124,8 +139,9 @@ export const VerticalSidebarMenu: React.FC<VerticalSidebarMenuProps> = ({
   menuGroups,
   currentMenuKey,
   onAddSpace,
+  onLogoutClick,
+  logoutLabel,
 }) => {
-  // 缓存文本避免渲染时副作用
   const addSpaceText = useMemo(() => {
     const currentLang = I18n.getLanguage?.() || 'zh-CN';
     const isZhCN = currentLang.startsWith('zh');
@@ -143,17 +159,21 @@ export const VerticalSidebarMenu: React.FC<VerticalSidebarMenuProps> = ({
     () => I18n.t('workspace_search_placeholder', {}, '搜索空间'),
     [],
   );
-
+  const logoutText = useMemo(
+    () => logoutLabel || I18n.t('basic_log_out', {}, '退出登录'),
+    [logoutLabel],
+  );
   return (
     <div className="w-[240px] h-full flex flex-col coz-bg-max border-r coz-stroke-primary">
-      {/* 顶部区域 */}
       <div className="px-[16px] pt-[16px] pb-[12px]">
-        {/* Logo */}
         <div
           className="flex items-center gap-[8px] mb-[12px] cursor-pointer hover:opacity-80"
           onClick={onLogoClick}
         >
-          <div className="w-[32px] h-[32px] rounded-[8px] coz-bg-brand flex items-center justify-center">
+          <div
+            className="w-[32px] h-[32px] rounded-[8px] flex items-center justify-center"
+            style={{ background: 'var(--coz-bg-brand, #4D53E8)' }}
+          >
             <span className="text-[18px] font-bold text-white">扣</span>
           </div>
           <Typography.Title
@@ -163,8 +183,6 @@ export const VerticalSidebarMenu: React.FC<VerticalSidebarMenuProps> = ({
             {appName}
           </Typography.Title>
         </div>
-
-        {/* 空间切换下拉框 */}
         <SpaceSwitcherDropdown
           currentSpace={currentSpace}
           spaceList={spaceList}
@@ -173,23 +191,19 @@ export const VerticalSidebarMenu: React.FC<VerticalSidebarMenuProps> = ({
           searchPlaceholder={searchPlaceholder}
           addSpaceText={addSpaceText}
         >
-          <div className="cursor-pointer w-full mb-[12px]">
-            <div className="h-[40px] px-[12px] w-full hover:coz-bg-secondary rounded-[8px] flex items-center gap-[8px] transition-colors">
-              <SpaceAvatar space={currentSpace} size="small" />
-              <Typography.Text
-                ellipsis={{ showTooltip: true, rows: 1 }}
-                className="flex-1 coz-fg-primary text-[14px] font-[500]"
-              >
-                {currentSpace?.space_type === SpaceType.Personal
-                  ? I18n.t('menu_title_personal_space', {}, currentSpace?.name)
-                  : currentSpace?.name || ''}
-              </Typography.Text>
-              <IconCozArrowDown className="text-[12px] coz-fg-tertiary shrink-0" />
-            </div>
+          <div className="h-[40px] px-[12px] w-full mb-[12px] cursor-pointer hover:coz-bg-secondary rounded-[8px] flex items-center gap-[8px] transition-colors">
+            <SpaceAvatar space={currentSpace} size="small" />
+            <Typography.Text
+              ellipsis={{ showTooltip: true, rows: 1 }}
+              className="flex-1 coz-fg-primary text-[14px] font-[500]"
+            >
+              {currentSpace?.space_type === SpaceType.Personal
+                ? I18n.t('menu_title_personal_space', {}, currentSpace?.name)
+                : currentSpace?.name || ''}
+            </Typography.Text>
+            <IconCozArrowDown className="text-[12px] coz-fg-tertiary shrink-0" />
           </div>
         </SpaceSwitcherDropdown>
-
-        {/* 创建按钮 */}
         <Button
           theme="light"
           size="large"
@@ -200,8 +214,6 @@ export const VerticalSidebarMenu: React.FC<VerticalSidebarMenuProps> = ({
           <span className="text-white font-[500]">{createButtonText}</span>
         </Button>
       </div>
-
-      {/* 导航菜单主体 */}
       <div className="flex-1 overflow-y-auto px-[8px] pb-[16px]">
         {menuGroups.map((group, groupIndex) => (
           <div key={groupIndex}>
@@ -246,6 +258,25 @@ export const VerticalSidebarMenu: React.FC<VerticalSidebarMenuProps> = ({
           </div>
         ))}
       </div>
+      {onLogoutClick ? (
+        <div className="px-[8px] pb-[16px]">
+          <div className="h-[1px] coz-stroke-primary mb-[12px]" />
+          <div
+            className={cls(
+              'flex items-center gap-[12px] px-[12px] h-[40px] rounded-[8px] cursor-pointer transition-colors',
+              'hover:coz-bg-secondary-hovered',
+            )}
+            onClick={onLogoutClick}
+          >
+            <span className="text-[18px] shrink-0 coz-fg-secondary">
+              <IconCozExit />
+            </span>
+            <Typography.Text className="flex-1 text-[14px] font-[500] coz-fg-secondary">
+              {logoutText}
+            </Typography.Text>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

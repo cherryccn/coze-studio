@@ -54,4 +54,5 @@ type SingleAgent interface {
 	GetPublishedInfo(ctx context.Context, agentID int64) (*entity.PublishInfo, error)
 	SavePublishRecord(ctx context.Context, p *entity.SingleAgentPublish, e *entity.SingleAgent) error
 	GetPublishConnectorList(ctx context.Context, agentID int64) (*entity.PublishConnectorData, error)
+	UnpublishAgent(ctx context.Context, agentID int64, connectorIDs []int64) (*entity.PublishInfo, map[int64]bool, error)
 }

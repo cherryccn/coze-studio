@@ -45,10 +45,6 @@ import {
   IconCozKnowledge,
   IconCozKnowledgeFill,
   IconCozArrowDown,
-  IconCozDocument,
-  IconCozDocumentFill,
-  IconCozPeople,
-  IconCozPeopleFill,
 } from '@coze-arch/coze-design/icons';
 import { Space, Avatar, Typography } from '@coze-arch/coze-design';
 import { useRouteConfig } from '@coze-arch/bot-hooks';
@@ -119,12 +115,14 @@ export const WorkspaceSubMenu = () => {
   const spaceList = useSpaceStore(state => state.spaceList);
 
   // 创建空间模态框
-  const { node: createSpaceModal, open: openCreateSpaceModal } = useCreateSpace({
-    autoNavigate: true,
-    onSuccess: spaceId => {
-      console.log('Workspace created successfully:', spaceId);
+  const { node: createSpaceModal, open: openCreateSpaceModal } = useCreateSpace(
+    {
+      autoNavigate: true,
+      onSuccess: spaceId => {
+        console.log('Workspace created successfully:', spaceId);
+      },
     },
-  });
+  );
 
   const subMenu = [
     {
@@ -141,20 +139,20 @@ export const WorkspaceSubMenu = () => {
       path: SpaceSubModuleEnum.LIBRARY,
       dataTestId: 'navigation_workspace_library',
     },
-    {
-      icon: <IconCozDocument />,
-      activeIcon: <IconCozDocumentFill />,
-      title: () => I18n.t('navigation_workspace_education', {}, 'Education'),
-      path: SpaceSubModuleEnum.EDUCATION,
-      dataTestId: 'navigation_workspace_education',
-    },
-    {
-      icon: <IconCozPeople />,
-      activeIcon: <IconCozPeopleFill />,
-      title: () => I18n.t('navigation_workspace_teacher', {}, 'Teacher'),
-      path: SpaceSubModuleEnum.TEACHER,
-      dataTestId: 'navigation_workspace_teacher',
-    },
+    // {
+    //   icon: <IconCozDocument />,
+    //   activeIcon: <IconCozDocumentFill />,
+    //   title: () => I18n.t('navigation_workspace_education', {}, 'Education'),
+    //   path: SpaceSubModuleEnum.EDUCATION,
+    //   dataTestId: 'navigation_workspace_education',
+    // },
+    // {
+    //   icon: <IconCozPeople />,
+    //   activeIcon: <IconCozPeopleFill />,
+    //   title: () => I18n.t('navigation_workspace_teacher', {}, 'Teacher'),
+    //   path: SpaceSubModuleEnum.TEACHER,
+    //   dataTestId: 'navigation_workspace_teacher',
+    // },
   ];
 
   // 空间切换处理函数

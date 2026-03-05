@@ -17,9 +17,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
+import { logout } from '@coze-foundation/account-adapter';
 import { I18n } from '@coze-arch/i18n';
 import { Modal } from '@coze-arch/coze-design';
-import { logout } from '@coze-foundation/account-adapter';
 
 export interface UseLogoutReturnType {
   open: () => void;
@@ -40,8 +40,8 @@ export const useLogout = (): UseLogoutReturnType => {
       onOk={async () => {
         await logout();
         setVisible(false);
-        // Jump to root path
-        navigate('/');
+        // Jump to login page
+        navigate('/sign');
       }}
       onCancel={() => {
         setVisible(false);

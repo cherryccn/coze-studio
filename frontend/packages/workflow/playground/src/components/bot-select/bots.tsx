@@ -17,16 +17,16 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 
 import { debounce } from 'lodash-es';
+import { IconSearch } from '@douyinfe/semi-icons';
 import { PUBLIC_SPACE_ID } from '@coze-workflow/base/constants';
 import { concatTestId } from '@coze-workflow/base';
+import {
+  IntelligenceStatus,
+  IntelligenceType,
+} from '@coze-arch/idl/intelligence_api';
 import { I18n } from '@coze-arch/i18n';
 import { Typography, Spin, Avatar, Select } from '@coze-arch/bot-semi';
-import {
-  ListBotDraftType,
-  PublishStatus,
-} from '@coze-arch/bot-api/developer_api';
-import { DeveloperApi } from '@coze-arch/bot-api';
-import { IconSearch } from '@douyinfe/semi-icons';
+import { intelligenceApi } from '@coze-arch/bot-api';
 
 import { useGlobalState } from '../../hooks';
 import { useExtraBotOption } from './use-extra-bot-option';
@@ -117,10 +117,10 @@ export const Bots: React.FC<BotsProps> = ({ value, onChange, ...props }) => {
   const [selectList = [], setSelectList] = useState<IBotSelectOptions>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isShowFoot, setIsShowFoot] = useState<boolean>(false);
-  const [pageIndex, setPageIndex] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
   const [searchTotal, setTotal] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const nextCursorRef = useRef<string | undefined>();
 
   // Due to paging restrictions, the selected botId may not find the corresponding option and needs to be added
   const extraBotOption = useExtraBotOption(selectList, value);
@@ -136,36 +136,40 @@ export const Bots: React.FC<BotsProps> = ({ value, onChange, ...props }) => {
     fetchBotList();
   }, []);
 
-  const fetchBotList = async (
-    index?: number,
-    query?: string,
-    isReset = false,
-  ) => {
+  const fetchBotList = async (query?: string, isReset = false) => {
     if (query) {
       setIsLoading(true);
     }
+    if (isReset) {
+      nextCursorRef.current = undefined;
+    }
 
-    const res = await DeveloperApi.GetDraftBotList({
+    const res = await intelligenceApi.GetDraftIntelligenceList({
       space_id:
         globalState.spaceId === PUBLIC_SPACE_ID
           ? globalState.personalSpaceId
           : globalState.spaceId,
-      bot_name: query ?? search,
+      name: query ?? search,
       order_by: 0,
-      team_bot_type: ListBotDraftType.TeamBots,
-      page_index: index ?? pageIndex,
-      page_size: 30,
-      is_publish: PublishStatus.All,
+      types: [IntelligenceType.Bot],
+      cursor_id: nextCursorRef.current,
+      size: 30,
+      status: [
+        IntelligenceStatus.Using,
+        IntelligenceStatus.Banned,
+        IntelligenceStatus.MoveFailed,
+      ],
     });
-    const { bot_draft_list, total = 0 } = res?.data ?? {};
-    const list: IBotSelectOptions = (bot_draft_list ?? []).map(it => ({
-      name: it.name ?? '',
-      value: it.id ?? '',
-      avatar: it.icon_url ?? '',
+    const { intelligences, total = 0, next_cursor_id } = res?.data ?? {};
+    const list: IBotSelectOptions = (intelligences ?? []).map(it => ({
+      name: it.basic_info?.name ?? '',
+      value: it.basic_info?.id ?? '',
+      avatar: it.basic_info?.icon_url ?? '',
     }));
     const totalList = isReset ? list : [...selectList, ...list];
 
     setTotal(total);
+    nextCursorRef.current = next_cursor_id;
     setSelectList(totalList);
     setIsShowFoot(totalList.length < total);
     setIsLoading(false);
@@ -176,16 +180,13 @@ export const Bots: React.FC<BotsProps> = ({ value, onChange, ...props }) => {
       return;
     }
     isLoadMoreDate.current = true;
-    const newPageIndex = pageIndex + 1;
-    setPageIndex(newPageIndex);
-    await fetchBotList(newPageIndex);
+    await fetchBotList();
     isLoadMoreDate.current = false;
   };
 
   const handleSearch = query => {
     setSearch(query);
-    setPageIndex(1);
-    fetchBotList(1, query, true);
+    fetchBotList(query, true);
   };
 
   return (

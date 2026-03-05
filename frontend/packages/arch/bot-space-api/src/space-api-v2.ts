@@ -25,7 +25,11 @@ import {
 } from '@coze-arch/bot-api';
 
 const apiList = [
+  'SaveSpaceV2',
+  'ExitSpaceV2',
   'InviteMemberLinkV2',
+  'GetSpaceInviteManageList',
+  'RevocateSpaceInvite',
   'AddBotSpaceMemberV2',
   'SearchMemberV2',
   'UpdateSpaceMemberV2',
@@ -37,7 +41,11 @@ const apiList = [
 ];
 
 type ApiType =
+  | 'SaveSpaceV2'
+  | 'ExitSpaceV2'
   | 'InviteMemberLinkV2'
+  | 'GetSpaceInviteManageList'
+  | 'RevocateSpaceInvite'
   | 'AddBotSpaceMemberV2'
   | 'SearchMemberV2'
   | 'RemoveSpaceMemberV2'

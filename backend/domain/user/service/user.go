@@ -76,6 +76,88 @@ type CreateSpaceResponse struct {
 	SpaceID int64
 }
 
+type UpdateSpaceRequest struct {
+	SpaceID     int64
+	OperatorID  int64
+	Name        *string
+	Description *string
+	IconURI     *string
+}
+
+const (
+	SpaceRoleOwner  int32 = 1
+	SpaceRoleAdmin  int32 = 2
+	SpaceRoleMember int32 = 3
+)
+
+type SpaceMember struct {
+	SpaceID   int64
+	UserID    int64
+	RoleType  int32
+	CreatedAt int64
+	UpdatedAt int64
+}
+
+type SpaceMemberSnapshot struct {
+	Space        *entity.Space
+	OperatorRole int32
+	Members      []*SpaceMember
+	AdminTotal   int64
+	MemberTotal  int64
+}
+
+type AddSpaceMemberItem struct {
+	UserID   int64
+	RoleType int32
+}
+
+type SpaceMemberDetailRequest struct {
+	SpaceID    int64
+	OperatorID int64
+}
+
+type SearchUsersRequest struct {
+	Keywords []string
+	Page     int
+	Size     int
+}
+
+type SearchUsersResponse struct {
+	Users []*entity.User
+	Total int64
+}
+
+type AddSpaceMembersRequest struct {
+	SpaceID     int64
+	OperatorID  int64
+	MemberToAdd []AddSpaceMemberItem
+}
+
+type UpdateSpaceMemberRoleRequest struct {
+	SpaceID      int64
+	OperatorID   int64
+	TargetUserID int64
+	TargetRole   int32
+}
+
+type RemoveSpaceMemberRequest struct {
+	SpaceID      int64
+	OperatorID   int64
+	TargetUserID int64
+}
+
+type TransferSpaceOwnerRequest struct {
+	SpaceID        int64
+	OperatorID     int64
+	TransferUserID int64
+}
+
+type ExitSpaceRequest struct {
+	SpaceID        int64
+	OperatorID     int64
+	TransferUserID *int64
+}
+
 type User interface {
 	SaasUserProvider
 	// Create creates or registers a new user.
@@ -89,10 +171,18 @@ type User interface {
 	ValidateProfileUpdate(ctx context.Context, req *ValidateProfileUpdateRequest) (resp *ValidateProfileUpdateResponse, err error)
 	GetUserProfiles(ctx context.Context, userID int64) (user *entity.User, err error)
 	MGetUserProfiles(ctx context.Context, userIDs []int64) (users []*entity.User, err error)
+	SearchUsers(ctx context.Context, req *SearchUsersRequest) (resp *SearchUsersResponse, err error)
 	ValidateSession(ctx context.Context, sessionKey string) (session *entity.Session, exist bool, err error)
 	GetUserSpaceList(ctx context.Context, userID int64) (spaces []*entity.Space, err error)
 	GetUserSpaceBySpaceID(ctx context.Context, spaceID []int64) (space []*entity.Space, err error)
 	CreateSpace(ctx context.Context, req *CreateSpaceRequest) (resp *CreateSpaceResponse, err error)
+	UpdateSpace(ctx context.Context, req *UpdateSpaceRequest) error
+	GetSpaceMemberDetail(ctx context.Context, req *SpaceMemberDetailRequest) (resp *SpaceMemberSnapshot, err error)
+	AddSpaceMembers(ctx context.Context, req *AddSpaceMembersRequest) error
+	UpdateSpaceMemberRole(ctx context.Context, req *UpdateSpaceMemberRoleRequest) error
+	RemoveSpaceMember(ctx context.Context, req *RemoveSpaceMemberRequest) error
+	TransferSpaceOwner(ctx context.Context, req *TransferSpaceOwnerRequest) error
+	ExitSpace(ctx context.Context, req *ExitSpaceRequest) error
 }
 
 type SaasUserProvider interface {

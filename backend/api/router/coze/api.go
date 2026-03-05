@@ -117,6 +117,7 @@ func Register(r *server.Hertz) {
 				_publish0.POST("/check_version_number", append(_checkprojectversionnumberMw(), coze.CheckProjectVersionNumber)...)
 				_publish0.POST("/connector_list", append(_projectpublishconnectorlistMw(), coze.ProjectPublishConnectorList)...)
 				_publish0.POST("/get_published_connector", append(_getprojectpublishedconnectorMw(), coze.GetProjectPublishedConnector)...)
+				_publish0.POST("/publish_intelligence_unlist", coze.PublishIntelligenceUnList)
 				_publish0.POST("/publish_project", append(_publishprojectMw(), coze.PublishProject)...)
 				_publish0.POST("/publish_record_detail", append(_getpublishrecorddetailMw(), coze.GetPublishRecordDetail)...)
 				_publish0.POST("/publish_record_list", append(_getpublishrecordlistMw(), coze.GetPublishRecordList)...)
@@ -343,6 +344,16 @@ func Register(r *server.Hertz) {
 				_space := _playground_api.Group("/space", _spaceMw()...)
 				_space.POST("/list", append(_getspacelistv2Mw(), coze.GetSpaceListV2)...)
 				_space.POST("/save", append(_savespacev2Mw(), coze.SaveSpaceV2)...)
+				_space.POST("/member/detail", coze.SpaceMemberDetailV2)
+				_space.POST("/member/search", coze.SearchMemberV2)
+				_space.POST("/member/add", coze.AddBotSpaceMemberV2)
+				_space.POST("/member/update", coze.UpdateSpaceMemberV2)
+				_space.POST("/member/remove", coze.RemoveSpaceMemberV2)
+				_space.POST("/member/transfer", coze.TransferSpaceV2)
+				_space.POST("/member/exit", coze.ExitSpaceV2)
+				_space.POST("/invite", coze.InviteMemberLinkV2)
+				_space.GET("/invite_manage_list", coze.GetSpaceInviteManageList)
+				_space.GET("/revocate_invite", coze.RevocateSpaceInvite)
 			}
 		}
 		{

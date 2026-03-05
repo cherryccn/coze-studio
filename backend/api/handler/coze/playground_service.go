@@ -20,6 +20,7 @@ package coze
 
 import (
 	"context"
+	"strings"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -206,20 +207,210 @@ func GetSpaceListV2(ctx context.Context, c *app.RequestContext) {
 // @router /api/playground_api/space/save [POST]
 func SaveSpaceV2(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req playground.SaveSpaceV2Request
+	var req playground.SaveSpaceV2Payload
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		invalidParamRequestResponse(c, err.Error())
 		return
 	}
 
-	// Validate required fields
-	if len(req.Name) == 0 {
+	// Validate required fields for create-space scenario.
+	if strings.TrimSpace(req.SpaceID) == "" && len(strings.TrimSpace(req.Name)) == 0 {
 		invalidParamRequestResponse(c, "space name is required")
 		return
 	}
 
 	resp, err := user.UserApplicationSVC.SaveSpaceV2(ctx, &req)
+	if err != nil {
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// SpaceMemberDetailV2 .
+// @router /api/playground_api/space/member/detail [POST]
+func SpaceMemberDetailV2(ctx context.Context, c *app.RequestContext) {
+	var req playground.SpaceMemberDetailV2Request
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		invalidParamRequestResponse(c, err.Error())
+		return
+	}
+
+	resp, err := user.UserApplicationSVC.SpaceMemberDetailV2(ctx, &req)
+	if err != nil {
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// SearchMemberV2 .
+// @router /api/playground_api/space/member/search [POST]
+func SearchMemberV2(ctx context.Context, c *app.RequestContext) {
+	var req playground.SearchMemberV2Request
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		invalidParamRequestResponse(c, err.Error())
+		return
+	}
+
+	resp, err := user.UserApplicationSVC.SearchMemberV2(ctx, &req)
+	if err != nil {
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// AddBotSpaceMemberV2 .
+// @router /api/playground_api/space/member/add [POST]
+func AddBotSpaceMemberV2(ctx context.Context, c *app.RequestContext) {
+	var req playground.AddSpaceMemberV2Request
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		invalidParamRequestResponse(c, err.Error())
+		return
+	}
+
+	resp, err := user.UserApplicationSVC.AddBotSpaceMemberV2(ctx, &req)
+	if err != nil {
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// UpdateSpaceMemberV2 .
+// @router /api/playground_api/space/member/update [POST]
+func UpdateSpaceMemberV2(ctx context.Context, c *app.RequestContext) {
+	var req playground.UpdateSpaceMemberV2Request
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		invalidParamRequestResponse(c, err.Error())
+		return
+	}
+
+	resp, err := user.UserApplicationSVC.UpdateSpaceMemberV2(ctx, &req)
+	if err != nil {
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// RemoveSpaceMemberV2 .
+// @router /api/playground_api/space/member/remove [POST]
+func RemoveSpaceMemberV2(ctx context.Context, c *app.RequestContext) {
+	var req playground.RemoveSpaceMemberV2Request
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		invalidParamRequestResponse(c, err.Error())
+		return
+	}
+
+	resp, err := user.UserApplicationSVC.RemoveSpaceMemberV2(ctx, &req)
+	if err != nil {
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// TransferSpaceV2 .
+// @router /api/playground_api/space/member/transfer [POST]
+func TransferSpaceV2(ctx context.Context, c *app.RequestContext) {
+	var req playground.TransferSpaceV2Request
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		invalidParamRequestResponse(c, err.Error())
+		return
+	}
+
+	resp, err := user.UserApplicationSVC.TransferSpaceV2(ctx, &req)
+	if err != nil {
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// ExitSpaceV2 .
+// @router /api/playground_api/space/member/exit [POST]
+func ExitSpaceV2(ctx context.Context, c *app.RequestContext) {
+	var req playground.ExitSpaceV2Request
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		invalidParamRequestResponse(c, err.Error())
+		return
+	}
+
+	resp, err := user.UserApplicationSVC.ExitSpaceV2(ctx, &req)
+	if err != nil {
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// InviteMemberLinkV2 .
+// @router /api/playground_api/space/invite [POST]
+func InviteMemberLinkV2(ctx context.Context, c *app.RequestContext) {
+	var req playground.InviteMemberLinkV2Request
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		invalidParamRequestResponse(c, err.Error())
+		return
+	}
+
+	resp, err := user.UserApplicationSVC.InviteMemberLinkV2(ctx, &req)
+	if err != nil {
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// GetSpaceInviteManageList .
+// @router /api/playground_api/space/invite_manage_list [GET]
+func GetSpaceInviteManageList(ctx context.Context, c *app.RequestContext) {
+	var req playground.GetSpaceInviteManageListRequest
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		invalidParamRequestResponse(c, err.Error())
+		return
+	}
+
+	resp, err := user.UserApplicationSVC.GetSpaceInviteManageList(ctx, &req)
+	if err != nil {
+		internalServerErrorResponse(ctx, c, err)
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// RevocateSpaceInvite .
+// @router /api/playground_api/space/revocate_invite [GET]
+func RevocateSpaceInvite(ctx context.Context, c *app.RequestContext) {
+	var req playground.RevocateSpaceInviteRequest
+	err := c.BindAndValidate(&req)
+	if err != nil {
+		invalidParamRequestResponse(c, err.Error())
+		return
+	}
+
+	resp, err := user.UserApplicationSVC.RevocateSpaceInvite(ctx, &req)
 	if err != nil {
 		internalServerErrorResponse(ctx, c, err)
 		return

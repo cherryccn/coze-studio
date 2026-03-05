@@ -53,6 +53,12 @@ export const Develop = lazy(() => import('../pages/develop'));
 // resource library page
 export const Library = lazy(() => import('../pages/library'));
 
+// task center page
+export const TaskCenter = lazy(() => import('../pages/task'));
+
+// space config page
+export const SpaceConfigPage = lazy(() => import('../pages/space-config'));
+
 // Agent IDE Layout Component
 export const AgentIDELayout = lazy(
   () => import('@coze-agent-ide/layout-adapter'),
@@ -138,17 +144,13 @@ export const exploreSubMenu = lazy(() =>
 );
 
 // template page
-export const ExploreTemplatePage = lazy(() =>
-  import('@coze-community/explore').then(exps => ({
-    default: exps.TemplatePage,
-  })),
+export const ExploreTemplatePage = lazy(
+  () => import('../pages/explore-mock/template-store-page'),
 );
 
 // plugin store page
-export const ExplorePluginPage = lazy(() =>
-  import('@coze-community/explore').then(exps => ({
-    default: exps.PluginPage,
-  })),
+export const ExplorePluginPage = lazy(
+  () => import('../pages/explore-mock/plugin-store-page'),
 );
 
 // Education platform - Script library list page
@@ -220,4 +222,3 @@ export const EduStudentClassDetail = lazy(() =>
     default: res.LearningCenter,
   })),
 );
-

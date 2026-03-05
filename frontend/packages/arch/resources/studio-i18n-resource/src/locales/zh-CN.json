@@ -16639,7 +16639,7 @@
   "workspace_develop_search_project": "搜索项目",
   "workspace_exit": "离开空间",
   "workspace_exit_button": "离开空间",
-  "workspace_exit_desc": "退出空间后，未提交的草稿版本将无法保留。请在退出前选择要将数据传输到的空间成员。",
+  "workspace_exit_desc": "退出空间后，未提交的草稿版本将无法保留。",
   "workspace_folder_permission_settings_desc": "默认开启，开启后仅工作空间所有者/管理员可新建、编辑文件夹；关闭后，空间内所有成员均可进行操作。",
   "workspace_folder_permission_settings_title": "新建、编辑文件夹权限",
   "workspace_invitation_msg_sent": "已邀请{number}个用户，可在邀请管理页面查看邀请状态",

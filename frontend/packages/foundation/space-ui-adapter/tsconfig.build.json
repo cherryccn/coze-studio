@@ -18,6 +18,9 @@
   "exclude": ["node_modules", "dist"],
   "references": [
     {
+      "path": "../account-ui-adapter/tsconfig.build.json"
+    },
+    {
       "path": "../../arch/bot-api/tsconfig.build.json"
     },
     {

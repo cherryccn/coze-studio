@@ -55,6 +55,9 @@
       "path": "../../packages/arch/api-schema/tsconfig.build.json"
     },
     {
+      "path": "../../packages/arch/bot-api/tsconfig.build.json"
+    },
+    {
       "path": "../../packages/arch/bot-env/tsconfig.build.json"
     },
     {
@@ -62,6 +65,9 @@
     },
     {
       "path": "../../packages/arch/bot-md-box-adapter/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/arch/bot-space-api/tsconfig.build.json"
     },
     {
       "path": "../../packages/arch/bot-typings/tsconfig.build.json"
@@ -116,6 +122,9 @@
     },
     {
       "path": "../../packages/foundation/layout/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/foundation/space-store-adapter/tsconfig.build.json"
     },
     {
       "path": "../../packages/foundation/space-ui-adapter/tsconfig.build.json"

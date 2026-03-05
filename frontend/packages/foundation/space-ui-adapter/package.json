@@ -19,6 +19,7 @@
     "@coze-arch/i18n": "workspace:*",
     "@coze-arch/idl": "workspace:*",
     "@coze-common/biz-components": "workspace:*",
+    "@coze-foundation/account-ui-adapter": "workspace:*",
     "@coze-foundation/space-store": "workspace:*",
     "@coze-foundation/space-ui-base": "workspace:*",
     "react-router-dom": "^6.22.0"

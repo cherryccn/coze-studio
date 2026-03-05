@@ -29,6 +29,8 @@ type Space struct {
 	Description string
 	IconURL     string
 	SpaceType   SpaceType
+	// RoleType: 1=owner, 2=admin, 3=member
+	RoleType int32
 	OwnerID     int64
 	CreatorID   int64
 	CreatedAt   int64
