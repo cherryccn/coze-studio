@@ -16,11 +16,11 @@
 
 import { I18n } from '@coze-arch/i18n';
 import {
+  IconCozEmpty,
   IconCozMagnifier,
   IconCozPeopleFill,
 } from '@coze-arch/coze-design/icons';
 import { Avatar, Input, Modal, Typography } from '@coze-arch/coze-design';
-import emptyStateImage from '@coze-arch/bot-icons/src/assets/icons/large-empty.svg';
 
 import type { AddMemberCandidateItem } from './types';
 
@@ -71,11 +71,7 @@ const SelectIndicator = ({ selected }: { selected: boolean }) => (
 
 const AddMemberSearchEmpty = () => (
   <div className={styles['empty-wrap']}>
-    <img
-      src={emptyStateImage}
-      alt={I18n.t('team_add_member_empty_desc', {}, '搜索用户名以添加新成员')}
-      className={styles['empty-image']}
-    />
+    <IconCozEmpty className={styles['empty-image']} />
     <Typography.Text className={styles['empty-text']}>
       {I18n.t('team_add_member_empty_desc', {}, '搜索用户名以添加新成员')}
     </Typography.Text>
