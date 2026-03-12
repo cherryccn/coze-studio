@@ -857,6 +857,229 @@ table "app_static_conversation_online" {
     columns = [column.connector_id, column.user_id, column.template_id]
   }
 }
+table "billing_budget_rules" {
+  schema  = schema.opencoze
+  comment = "billing budget rules"
+  column "id" {
+    null           = false
+    type           = bigint
+    unsigned       = true
+    comment        = "id"
+    auto_increment = true
+  }
+  column "space_id" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "space id"
+  }
+  column "monthly_budget" {
+    null    = false
+    type    = decimal(16,2)
+    default = 0
+    comment = "monthly budget"
+  }
+  column "alarm_thresholds" {
+    null    = false
+    type    = varchar(64)
+    default = "70,90,100"
+    comment = "alarm thresholds"
+  }
+  column "over_limit_policy" {
+    null    = false
+    type    = varchar(16)
+    default = "warn"
+    comment = "over limit policy: warn/reject"
+  }
+  column "enabled" {
+    null     = false
+    type     = tinyint
+    default  = 1
+    unsigned = true
+    comment  = "enabled status"
+  }
+  column "updated_by" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "operator id"
+  }
+  column "updated_at" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "update time in milliseconds"
+  }
+  primary_key {
+    columns = [column.id]
+  }
+  index "idx_enabled" {
+    columns = [column.enabled]
+  }
+  index "uniq_space_id" {
+    unique  = true
+    columns = [column.space_id]
+  }
+}
+table "billing_daily_agg" {
+  schema  = schema.opencoze
+  comment = "daily billing aggregation"
+  column "dt" {
+    null    = false
+    type    = date
+    comment = "aggregation date"
+  }
+  column "space_id" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "space id"
+  }
+  column "project_type" {
+    null    = false
+    type    = varchar(16)
+    default = ""
+    comment = "project type: agent/app/workflow"
+  }
+  column "total_tokens" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "daily total tokens"
+  }
+  column "total_amount" {
+    null    = false
+    type    = decimal(16,6)
+    default = 0
+    comment = "daily total amount"
+  }
+  column "success_count" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "daily success count"
+  }
+  column "fail_count" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "daily fail count"
+  }
+  primary_key {
+    columns = [column.dt, column.space_id, column.project_type]
+  }
+  index "idx_project_type_dt" {
+    columns = [column.project_type, column.dt]
+  }
+  index "idx_space_dt" {
+    columns = [column.space_id, column.dt]
+  }
+}
+table "billing_records" {
+  schema  = schema.opencoze
+  comment = "billing detail records"
+  column "id" {
+    null           = false
+    type           = bigint
+    unsigned       = true
+    comment        = "id"
+    auto_increment = true
+  }
+  column "request_id" {
+    null    = false
+    type    = varchar(64)
+    default = ""
+    comment = "request unique identifier"
+  }
+  column "space_id" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "space id"
+  }
+  column "project_type" {
+    null    = false
+    type    = varchar(16)
+    default = ""
+    comment = "project type: agent/app/workflow"
+  }
+  column "project_id" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "project id"
+  }
+  column "model_id" {
+    null    = false
+    type    = varchar(64)
+    default = ""
+    comment = "model identifier"
+  }
+  column "usage_tokens" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "token usage"
+  }
+  column "unit_price" {
+    null    = false
+    type    = decimal(16,8)
+    default = 0
+    comment = "unit price"
+  }
+  column "amount" {
+    null    = false
+    type    = decimal(16,6)
+    default = 0
+    comment = "billing amount"
+  }
+  column "status" {
+    null    = false
+    type    = varchar(16)
+    default = "success"
+    comment = "status: success/failed/refund"
+  }
+  column "occurred_at" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "event time in milliseconds"
+  }
+  column "created_at" {
+    null     = false
+    type     = bigint
+    default  = 0
+    unsigned = true
+    comment  = "create time in milliseconds"
+  }
+  primary_key {
+    columns = [column.id]
+  }
+  index "idx_project_time" {
+    columns = [column.project_type, column.project_id, column.occurred_at]
+  }
+  index "idx_space_time" {
+    columns = [column.space_id, column.occurred_at]
+  }
+  index "idx_status_time" {
+    columns = [column.status, column.occurred_at]
+  }
+  index "uniq_request_id" {
+    unique  = true
+    columns = [column.request_id]
+  }
+}
 table "chat_flow_role_config" {
   schema  = schema.opencoze
   comment = "chat_flow_role_config"

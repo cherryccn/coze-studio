@@ -30,6 +30,7 @@ import (
 	"github.com/coze-dev/coze-studio/backend/application/memory"
 	"github.com/coze-dev/coze-studio/backend/application/modelmgr"
 	"github.com/coze-dev/coze-studio/backend/application/openauth"
+	"github.com/coze-dev/coze-studio/backend/application/platform"
 	"github.com/coze-dev/coze-studio/backend/application/plugin"
 	"github.com/coze-dev/coze-studio/backend/application/prompt"
 	"github.com/coze-dev/coze-studio/backend/application/search"
@@ -98,6 +99,7 @@ type basicServices struct {
 	uploadSVC    *upload.UploadService
 
 	permissionSVC *permission.PermissionApplicationService
+	platformSVC   *platform.PlatformApplicationService
 }
 
 type primaryServices struct {
@@ -194,6 +196,7 @@ func initBasicServices(ctx context.Context, infra *appinfra.AppDependencies, e *
 	})
 
 	permissionSVC := permission.InitService(&permission.ServiceComponents{})
+	platformSVC := platform.InitService(infra.DB, infra.CacheCli)
 
 	return &basicServices{
 		infra:        infra,
@@ -207,6 +210,7 @@ func initBasicServices(ctx context.Context, infra *appinfra.AppDependencies, e *
 		uploadSVC:    uploadSVC,
 
 		permissionSVC: permissionSVC,
+		platformSVC:   platformSVC,
 	}, nil
 }
 

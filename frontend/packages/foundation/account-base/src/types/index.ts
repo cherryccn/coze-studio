@@ -88,6 +88,7 @@ export interface UserInfo {
   app_user_info: {
     user_unique_name?: string;
   };
+  platform_management_access?: boolean;
   need_check_bind_status: boolean;
   bui_audit_info?: {
     audit_info: {

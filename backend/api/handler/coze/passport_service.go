@@ -133,26 +133,6 @@ func PassportWebEmailPasswordResetGet(ctx context.Context, c *app.RequestContext
 	c.JSON(http.StatusOK, resp)
 }
 
-// PassportAccountInfoV2 .
-// @router /passport/account/info/v2/ [POST]
-func PassportAccountInfoV2(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req passport.PassportAccountInfoV2Request
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp, err := user.UserApplicationSVC.PassportAccountInfoV2(ctx, &req)
-	if err != nil {
-		internalServerErrorResponse(ctx, c, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, resp)
-}
-
 // UserUpdateAvatar .
 // @router web/user/update/upload_avatar/ [POST]
 func UserUpdateAvatar(ctx context.Context, c *app.RequestContext) {

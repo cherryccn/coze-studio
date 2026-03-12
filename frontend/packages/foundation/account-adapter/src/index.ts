@@ -40,5 +40,9 @@ export {
   connector2Redirect,
 } from './utils';
 export { useCheckLogin } from './hooks';
+export {
+  hasPlatformManagementAccess,
+  usePlatformManagementAccess,
+} from './hooks/use-platform-management-access';
 
 export { passportApi } from './passport-api';

@@ -46,7 +46,8 @@ func SessionAuthMW() app.HandlerFunc {
 			return
 		}
 
-		if noNeedSessionCheckPath[string(ctx.GetRequest().URI().Path())] {
+		requestPath := string(ctx.GetRequest().URI().Path())
+		if noNeedSessionCheckPath[requestPath] {
 			ctx.Next(c)
 			return
 		}
@@ -54,6 +55,10 @@ func SessionAuthMW() app.HandlerFunc {
 		s := ctx.Cookie(entity.SessionKey)
 		if len(s) == 0 {
 			logs.Errorf("[SessionAuthMW] session id is nil")
+			if isPlatformAPIPath(requestPath) {
+				httputil.PlatformUnauthorized(ctx, "missing session_key in cookie")
+				return
+			}
 			httputil.Unauthorized(ctx, "missing session_key in cookie")
 			return
 		}
@@ -62,13 +67,30 @@ func SessionAuthMW() app.HandlerFunc {
 		session, err := user.UserApplicationSVC.ValidateSession(c, string(s))
 		if err != nil {
 			logs.Errorf("[SessionAuthMW] validate session failed, err: %v", err)
+			if isPlatformAPIPath(requestPath) {
+				if httputil.IsUserAuthenticationError(err) {
+					httputil.PlatformUnauthorized(ctx, "session is invalid or expired")
+					return
+				}
+
+				httputil.PlatformInternalError(c, ctx, err)
+				return
+			}
 			httputil.InternalError(c, ctx, err)
 			return
 		}
+		if session == nil {
+			logs.Errorf("[SessionAuthMW] session is nil")
+			if isPlatformAPIPath(requestPath) {
+				httputil.PlatformUnauthorized(ctx, "session is invalid or expired")
+				return
+			}
 
-		if session != nil {
-			ctxcache.Store(c, consts.SessionDataKeyInCtx, session)
+			httputil.Unauthorized(ctx, "session is invalid or expired")
+			return
 		}
+
+		ctxcache.Store(c, consts.SessionDataKeyInCtx, session)
 
 		ctx.Next(c)
 	}
@@ -84,7 +106,7 @@ func AdminAuthMW() app.HandlerFunc {
 			return
 		}
 
-		baseConf, err := config.Base().GetBaseConfig(c)
+		baseConf, err := loadBaseConfigForAuth(c)
 		if err != nil {
 			logs.Errorf("[AdminAuthMW] get base config failed, err: %v", err)
 			httputil.InternalError(c, ctx, err)

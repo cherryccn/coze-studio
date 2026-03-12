@@ -17,12 +17,12 @@
 import { useParams } from 'react-router-dom';
 import { type FC, type PropsWithChildren } from 'react';
 
-import { GlobalLayout } from '@coze-foundation/layout';
 import { VerticalSidebarMenuAdapter } from '@coze-foundation/space-ui-adapter';
+import { GlobalLayout } from '@coze-foundation/layout';
 import { useCreateBotAction } from '@coze-foundation/global';
 import { RequireAuthContainer } from '@coze-foundation/account-ui-adapter';
-import { I18n } from '@coze-arch/i18n';
-import { useRouteConfig } from '@coze-arch/bot-hooks';
+import { usePlatformManagementAccess } from '@coze-foundation/account-adapter';
+import { I18n, type I18nKeysNoOptionsType } from '@coze-arch/i18n';
 import {
   IconCozPlusCircle,
   IconCozWorkspace,
@@ -30,18 +30,59 @@ import {
   IconCozCompass,
   IconCozCompassFill,
   IconCozDocument,
+  IconCozSetting,
+  IconCozSettingFill,
 } from '@coze-arch/coze-design/icons';
+import { useRouteConfig } from '@coze-arch/bot-hooks';
 
-import { AccountDropdown } from '../account-dropdown';
 import { useHasSider } from './hooks/use-has-sider';
+import { AccountDropdown } from '../account-dropdown';
 
 // 启用新的垂直侧边栏菜单
 const USE_VERTICAL_SIDEBAR = true;
+const tNoOptions = (key: string, fallback: string) =>
+  I18n.t(key as unknown as I18nKeysNoOptionsType, {}, fallback);
+
+export const buildGlobalLayoutMenus = ({
+  showPlatformManagement,
+}: {
+  showPlatformManagement: boolean;
+}) => {
+  const menus = [
+    {
+      title: I18n.t('navigation_workspace'),
+      icon: <IconCozWorkspace />,
+      activeIcon: <IconCozWorkspaceFill />,
+      path: '/space',
+      dataTestId: 'layout_workspace-button',
+    },
+    {
+      title: I18n.t('menu_title_store'),
+      icon: <IconCozCompass />,
+      activeIcon: <IconCozCompassFill />,
+      path: '/explore',
+      dataTestId: 'layout_explore-button',
+    },
+  ];
+
+  if (showPlatformManagement) {
+    menus.push({
+      title: tNoOptions('platform_management_menu_title', '平台管理'),
+      icon: <IconCozSetting />,
+      activeIcon: <IconCozSettingFill />,
+      path: '/platform',
+      dataTestId: 'layout_platform-management-button',
+    });
+  }
+
+  return menus;
+};
 
 export const GlobalLayoutComposed: FC<PropsWithChildren> = ({ children }) => {
   const config = useRouteConfig();
   const hasSider = useHasSider();
   const { space_id } = useParams();
+  const showPlatformManagement = usePlatformManagementAccess();
 
   const { createBot, createBotModal } = useCreateBotAction({
     currentSpaceId: space_id,
@@ -85,22 +126,7 @@ export const GlobalLayoutComposed: FC<PropsWithChildren> = ({ children }) => {
             dataTestId: 'layout_create-agent-button',
           },
         ]}
-        menus={[
-          {
-            title: I18n.t('navigation_workspace'),
-            icon: <IconCozWorkspace />,
-            activeIcon: <IconCozWorkspaceFill />,
-            path: '/space',
-            dataTestId: 'layout_workspace-button',
-          },
-          {
-            title: I18n.t('menu_title_store'),
-            icon: <IconCozCompass />,
-            activeIcon: <IconCozCompassFill />,
-            path: '/explore',
-            dataTestId: 'layout_explore-button',
-          },
-        ]}
+        menus={buildGlobalLayoutMenus({ showPlatformManagement })}
         extras={[
           {
             icon: <IconCozDocument />,

@@ -39,6 +39,7 @@ import {
   Library,
   TaskCenter,
   SpaceConfigPage,
+  PlatformManagementPage,
   PluginLayout,
   PluginToolPage,
   PluginPage,
@@ -395,6 +396,17 @@ export const router: ReturnType<typeof createBrowserRouter> =
               }),
             },
           ],
+        },
+
+        // platform management
+        {
+          path: 'platform',
+          Component: PlatformManagementPage,
+          loader: () => ({
+            hasSider: true,
+            requireAuth: true,
+            menuKey: BaseEnum.Enterprise,
+          }),
         },
       ],
     },

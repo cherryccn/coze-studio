@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-export {
-  useLogout,
-  RequireAuthContainer,
-} from '@coze-foundation/account-ui-base';
-export {
-  hasPlatformManagementAccess,
-  usePlatformManagementAccess,
-} from '@coze-foundation/account-adapter';
+export type TimeRangeKey = 'today' | 'last_7_days' | 'last_30_days' | 'custom';
+export type ProjectTypeKey = 'all' | 'agent' | 'app' | 'workflow';
 
-export { LoginPage } from './pages/login-page';
+export interface PlatformFilters {
+  timeRange: TimeRangeKey;
+  spaceId: string;
+  projectType: ProjectTypeKey;
+}
+
+export interface FilterSummaryItem {
+  key: string;
+  label: string;
+  value: string;
+}

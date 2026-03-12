@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-export {
-  useLogout,
-  RequireAuthContainer,
-} from '@coze-foundation/account-ui-base';
-export {
-  hasPlatformManagementAccess,
-  usePlatformManagementAccess,
-} from '@coze-foundation/account-adapter';
+import { useUserInfo } from '@coze-foundation/account-base';
 
-export { LoginPage } from './pages/login-page';
+export const hasPlatformManagementAccess = ({
+  platformManagementAccess,
+}: {
+  platformManagementAccess: unknown;
+}) => platformManagementAccess === true;
+
+export const usePlatformManagementAccess = () => {
+  const userInfo = useUserInfo();
+
+  return hasPlatformManagementAccess({
+    platformManagementAccess: userInfo?.platform_management_access,
+  });
+};

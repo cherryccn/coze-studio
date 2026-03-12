@@ -59,6 +59,11 @@ export const TaskCenter = lazy(() => import('../pages/task'));
 // space config page
 export const SpaceConfigPage = lazy(() => import('../pages/space-config'));
 
+// platform management page
+export const PlatformManagementPage = lazy(
+  () => import('../pages/platform-management'),
+);
+
 // Agent IDE Layout Component
 export const AgentIDELayout = lazy(
   () => import('@coze-agent-ide/layout-adapter'),
