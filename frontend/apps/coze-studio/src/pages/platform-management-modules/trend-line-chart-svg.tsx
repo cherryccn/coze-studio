@@ -31,6 +31,7 @@ interface TrendLineChartSvgProps {
   color: string;
   gradientId: string;
   hoverIndex: number | null;
+  tickFormatter: (value: number) => string;
   abbreviateNumber: (value: number) => string;
   buildAreaPath: (
     points: Array<{ x: number; y: number }>,
@@ -56,6 +57,7 @@ export const TrendLineChartSvg: FC<TrendLineChartSvgProps> = ({
   color,
   gradientId,
   hoverIndex,
+  tickFormatter,
   abbreviateNumber,
   buildAreaPath,
   buildLinePath,
@@ -65,11 +67,11 @@ export const TrendLineChartSvg: FC<TrendLineChartSvgProps> = ({
   <svg
     viewBox={`0 0 ${chartWidth} ${height}`}
     width="100%"
-    height={height}
-    preserveAspectRatio="none"
+    height="100%"
     onMouseMove={onMouseMove}
     onMouseLeave={onMouseLeave}
-    className="block"
+    className="block w-full h-full"
+    style={{ overflow: 'visible' }}
   >
     <defs>
       <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -97,7 +99,7 @@ export const TrendLineChartSvg: FC<TrendLineChartSvgProps> = ({
             fontSize={10}
             fill="#86909C"
           >
-            {abbreviateNumber(tick)}
+            {tickFormatter(tick)}
           </text>
         </g>
       );

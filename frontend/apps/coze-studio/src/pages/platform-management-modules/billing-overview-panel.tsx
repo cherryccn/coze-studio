@@ -362,8 +362,9 @@ export const BillingOverviewPanel: FC<BillingOverviewPanelProps> = ({
                 value: toFiniteNumber(item.amount),
               }))}
               valueFormatter={v => formatCurrency(v)}
+              tickFormatter={v => `¥${abbreviateNumber(v)}`}
               color="#3370FF"
-            />
+            />{' '}
             <TrendLineChart
               title={tNoOptions(
                 'platform_management_token_trend',

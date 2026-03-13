@@ -20,12 +20,10 @@ const MEGA = 1000000;
 export const formatDateShort = (raw: string): string => {
   const parts = raw.split('-');
   if (parts.length >= 3) {
-    return `${parts[1]}-${parts[2]}`;
+    return `${parseInt(parts[1], 10)}-${parseInt(parts[2], 10)}`;
   }
   return raw;
 };
-
-export const formatDateFull = (raw: string): string => raw.replace(/-/g, '/');
 
 export const abbreviateNumber = (value: number): string => {
   if (value >= MEGA) {
@@ -37,10 +35,7 @@ export const abbreviateNumber = (value: number): string => {
   if (value >= KILO) {
     return `${(value / KILO).toFixed(1)}K`;
   }
-  if (Number.isInteger(value)) {
-    return String(value);
-  }
-  return value.toFixed(2);
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
 };
 
 export const computeNiceTicks = (maxValue: number, count: number): number[] => {

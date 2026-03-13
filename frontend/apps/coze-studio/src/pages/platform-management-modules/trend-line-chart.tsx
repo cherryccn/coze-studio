@@ -31,6 +31,7 @@ export interface TrendLineChartProps {
   title: string;
   data: TrendDataPoint[];
   valueFormatter: (value: number) => string;
+  tickFormatter?: (value: number) => string;
   color?: string;
   height?: number;
   emptyText?: string;
@@ -52,6 +53,7 @@ export const TrendLineChart: FC<TrendLineChartProps> = ({
   title,
   data,
   valueFormatter,
+  tickFormatter = abbreviateNumber,
   color = DEFAULT_COLOR,
   height = DEFAULT_HEIGHT,
   emptyText,
