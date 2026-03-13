@@ -37,7 +37,7 @@ export interface TrendLineChartProps {
   emptyText?: string;
 }
 
-const DEFAULT_HEIGHT = 212;
+const DEFAULT_HEIGHT = 160;
 const DEFAULT_COLOR = '#3370FF';
 
 import { useTrendLineChart } from './use-trend-line-chart';
@@ -67,7 +67,6 @@ export const TrendLineChart: FC<TrendLineChartProps> = ({
     plotRight,
     plotTop,
     plotBottom,
-    plotWidth,
     plotHeight,
     yMax,
     ticks,
@@ -129,16 +128,15 @@ export const TrendLineChart: FC<TrendLineChartProps> = ({
             plotRight={plotRight}
             plotTop={plotTop}
             plotBottom={plotBottom}
-            plotWidth={plotWidth}
             plotHeight={plotHeight}
             yMax={yMax}
             ticks={ticks}
             xLabels={xLabels}
             points={points}
-            data={data}
             color={color}
             gradientId={gradientId}
             hoverIndex={hoverIndex}
+            tickFormatter={tickFormatter}
             abbreviateNumber={abbreviateNumber}
             buildAreaPath={buildAreaPath}
             buildLinePath={buildLinePath}
