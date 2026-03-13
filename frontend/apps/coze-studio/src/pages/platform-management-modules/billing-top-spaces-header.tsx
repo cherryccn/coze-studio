@@ -107,33 +107,35 @@ export const BillingTopSpacesHeader: FC<BillingTopSpacesHeaderProps> = ({
       : tNoOptions('platform_management_top_spaces_asc', '升序');
 
   return (
-    <div className="px-[18px] pt-[18px] pb-[12px]">
+    <div className="px-[18px] pt-4 pb-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-[8px]">
+        <div className="flex items-center gap-2">
           <TrophyIcon />
-          <Typography.Title heading={5} className="!mb-0">
+          <Typography.Title
+            heading={5}
+            className="!mb-0 text-[16px] font-semibold text-gray-900"
+          >
             {tNoOptions('platform_management_top_spaces', 'Top 空间成本排行')}
           </Typography.Title>
           {topSpacesCount > 0 ? (
-            <span
-              className="rounded-[10px] px-[7px] py-[1px] text-[11px] font-[500]"
-              style={{
-                backgroundColor: 'rgba(255,125,0,0.08)',
-                color: '#FF7D00',
-              }}
-            >
+            <span className="rounded-full px-[8px] py-[2px] text-[12px] font-[500] bg-[#FFF7E8] text-[#FF7D00]">
               Top {Math.min(topSpacesCount, displayLimit)}
             </span>
           ) : null}
         </div>
-        <Button size="small" loading={loading} onClick={onToggleOrder}>
+        <Button
+          size="small"
+          loading={loading}
+          onClick={onToggleOrder}
+          className="!text-gray-600"
+        >
           <span className="flex items-center gap-[4px]">
             <SortIcon direction={order} />
             {orderLabel}
           </span>
         </Button>
       </div>
-      <Typography.Text className="text-[12px] coz-fg-secondary mt-[4px] block">
+      <Typography.Text className="text-[13px] text-gray-500 mt-2 block">
         {tNoOptions(
           'platform_management_top_spaces_subtitle',
           '展示本期费用排名前 10 的空间',

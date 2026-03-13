@@ -89,36 +89,30 @@ export const BillingTopSpacesRow: FC<BillingTopSpacesRowProps> = ({
   return (
     <div
       key={`${item.space_id ?? index + rankingFallbackIndexStart}`}
-      className="top-spaces-row relative rounded-[8px] cursor-default"
-      style={{
-        borderBottom:
-          index < totalLength - 1 && index < displayLimit - 1
-            ? '1px solid rgba(148, 163, 184, 0.12)'
-            : 'none',
-      }}
+      className="top-spaces-row relative rounded-[8px] cursor-default bg-white border border-transparent hover:border-gray-100"
     >
       <div
-        className="absolute left-0 top-0 bottom-0 rounded-l-[8px]"
+        className="absolute left-0 top-0 bottom-0 rounded-[8px]"
         style={{
           width: `${Math.max(MIN_PROGRESS_PERCENT, ratio * FULL_PERCENT)}%`,
           background: `linear-gradient(90deg, ${barColor.from}, ${barColor.to})`,
           transition: 'width 0.4s ease',
         }}
       />
-      <div className="relative grid grid-cols-[36px,1fr,100px,120px,100px] items-center gap-[8px] py-[10px]">
+      <div className="relative grid grid-cols-[48px,1fr,100px,120px,100px] items-center gap-[8px] py-[10px] px-[8px]">
         <RankBadge rank={index + rankingFallbackIndexStart} />
         <div className="flex items-center gap-[6px] min-w-0">
-          <Typography.Text className="text-[13px] truncate">
+          <Typography.Text className="text-[13px] text-gray-800 truncate font-medium">
             {item.space_name || String(item.space_id || '--')}
           </Typography.Text>
         </div>
-        <Typography.Text className="text-[12px] text-right coz-fg-secondary tabular-nums">
+        <Typography.Text className="text-[12px] text-right text-gray-500 tabular-nums">
           {percent}%
         </Typography.Text>
-        <Typography.Text className="text-[13px] text-right font-[600] tabular-nums">
+        <Typography.Text className="text-[13px] text-right font-[600] text-gray-900 tabular-nums">
           {formatCurrency(item.amount)}
         </Typography.Text>
-        <Typography.Text className="text-[12px] text-right coz-fg-secondary tabular-nums">
+        <Typography.Text className="text-[12px] text-right text-gray-500 tabular-nums">
           {formatNumber(item.tokens)}
         </Typography.Text>
       </div>

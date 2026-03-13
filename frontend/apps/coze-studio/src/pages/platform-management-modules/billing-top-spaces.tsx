@@ -43,11 +43,6 @@ interface BillingTopSpacesSectionProps {
 
 import { BillingTopSpacesRow } from './billing-top-spaces-row';
 
-const PANEL_SURFACE_STYLE = {
-  backgroundColor: '#FFFFFF',
-  borderColor: 'rgba(226, 232, 240, 0.8)',
-};
-
 const DISPLAY_LIMIT = 10;
 const RANKING_FALLBACK_INDEX_START = 1;
 
@@ -78,10 +73,7 @@ export const BillingTopSpacesSection: FC<BillingTopSpacesSectionProps> = ({
   );
 
   return (
-    <div
-      className="overflow-hidden rounded-[16px] border border-solid"
-      style={PANEL_SURFACE_STYLE}
-    >
+    <div className="overflow-hidden bg-white h-full flex flex-col">
       <style>{topSpacesRowHoverStyle}</style>
       <BillingTopSpacesHeader
         topSpacesCount={topSpaces.length}
@@ -93,30 +85,27 @@ export const BillingTopSpacesSection: FC<BillingTopSpacesSectionProps> = ({
         formatCurrency={formatCurrency}
       />
 
-      <div
-        className="grid grid-cols-[36px,1fr,100px,120px,100px] items-center gap-[8px] px-[18px] py-[10px]"
-        style={{ backgroundColor: '#F7F8FA' }}
-      >
-        <Typography.Text className="text-[11px] coz-fg-secondary font-[500]">
+      <div className="grid grid-cols-[48px,1fr,100px,120px,100px] items-center gap-[8px] px-[18px] py-[10px] bg-gray-50 border-y border-gray-100">
+        <Typography.Text className="text-[12px] text-gray-500 font-medium">
           {tNoOptions('platform_management_top_spaces_rank', '排名')}
         </Typography.Text>
-        <Typography.Text className="text-[11px] coz-fg-secondary font-[500]">
+        <Typography.Text className="text-[12px] text-gray-500 font-medium">
           {tNoOptions('platform_management_top_spaces_name', '空间')}
         </Typography.Text>
-        <Typography.Text className="text-[11px] coz-fg-secondary font-[500] text-right">
+        <Typography.Text className="text-[12px] text-gray-500 font-medium text-right">
           {tNoOptions('platform_management_top_spaces_percent', '占比')}
         </Typography.Text>
-        <Typography.Text className="text-[11px] coz-fg-secondary font-[500] text-right">
+        <Typography.Text className="text-[12px] text-gray-500 font-medium text-right">
           {tNoOptions('platform_management_top_spaces_amount', '费用')}
         </Typography.Text>
-        <Typography.Text className="text-[11px] coz-fg-secondary font-[500] text-right">
+        <Typography.Text className="text-[12px] text-gray-500 font-medium text-right">
           Token
         </Typography.Text>
       </div>
 
-      <div className="px-[18px] pb-[18px]">
+      <div className="px-[18px] pb-[18px] pt-2 flex-1">
         {topSpaces.length ? (
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-1">
             {topSpaces.slice(0, DISPLAY_LIMIT).map((item, index) => (
               <BillingTopSpacesRow
                 key={`${item.space_id ?? index + RANKING_FALLBACK_INDEX_START}`}
@@ -134,7 +123,7 @@ export const BillingTopSpacesSection: FC<BillingTopSpacesSectionProps> = ({
             ))}
           </div>
         ) : (
-          <div className="py-[24px] text-center flex flex-col items-center gap-[8px]">
+          <div className="py-[24px] text-center flex flex-col items-center gap-[8px] justify-center h-full">
             <svg
               width="40"
               height="40"
@@ -169,7 +158,7 @@ export const BillingTopSpacesSection: FC<BillingTopSpacesSectionProps> = ({
                 fill="#E5E6EB"
               />
             </svg>
-            <Typography.Text className="text-[13px] coz-fg-secondary">
+            <Typography.Text className="text-[13px] text-gray-400">
               {tNoOptions(
                 'platform_management_empty_top_spaces',
                 '暂无排行数据',
