@@ -46,6 +46,40 @@ import {
 const tNoOptions = (key: string, fallback: string) =>
   I18n.t(key as unknown as I18nKeysNoOptionsType, {}, fallback);
 
+const BUDGETS_TABLE_STYLE = `
+.platform-management-budgets-table table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.platform-management-budgets-table thead th {
+  background: #F7F8FA;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 12px 16px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.platform-management-budgets-table th,
+.platform-management-budgets-table td {
+  padding: 16px 16px;
+  border-bottom: 1px solid #F1F5F9;
+  color: #1F2937;
+  font-size: 14px;
+  vertical-align: top;
+}
+
+.platform-management-budgets-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.platform-management-budgets-table tbody tr:hover td {
+  background: #F8FAFC;
+}
+`;
+
 interface BillingBudgetsPanelProps {
   selectedSpaceId: string;
   spaceOptions: BillingBudgetSpaceOption[];
@@ -88,34 +122,36 @@ const BillingBudgetsHeader: FC<BillingBudgetsHeaderProps> = ({
   onRefresh,
   onSpaceFilterChange,
 }) => (
-  <div className="flex flex-wrap items-start justify-between gap-[12px]">
-    <div className="flex flex-col gap-[4px]">
-      <Typography.Title heading={5} className="!mb-0">
-        {tNoOptions('platform_management_budgets_title', '预算与阈值')}
-      </Typography.Title>
-      <Typography.Text className="text-[12px] coz-fg-secondary">
+  <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="min-w-0 flex-1">
+      <div className="flex flex-wrap items-center gap-3">
+        <Typography.Title
+          heading={5}
+          className="!mb-0 text-[18px] font-semibold text-gray-900"
+        >
+          {tNoOptions('platform_management_budgets_title', '预算与阈值')}
+        </Typography.Title>
+        <span className="rounded-full px-[10px] py-[2px] text-[12px] font-[500] bg-gray-100 text-gray-600">
+          {total}
+        </span>
+      </div>
+      <Typography.Text className="mt-[4px] block text-[12px] text-gray-500">
         {tNoOptions(
           'platform_management_budgets_subtitle',
           `共 ${total} 个空间可配置月预算、告警阈值和超限策略`,
         )}
       </Typography.Text>
     </div>
-    <div className="flex flex-wrap items-center gap-[10px]">
+    <div className="flex flex-wrap items-center gap-3">
       <Select
         className="w-[200px]"
         disabled={busy}
         value={spaceFilter}
         optionList={spaceOptions}
         onChange={onSpaceFilterChange}
+        showSearch
       />
-      <Button
-        theme="light"
-        disabled={busy}
-        loading={loading}
-        onClick={onRefresh}
-        className="px-[16px] border border-solid coz-stroke-primary"
-        style={{ backgroundColor: '#F2F3F5', color: '#1F2329' }}
-      >
+      <Button disabled={busy} loading={loading} onClick={onRefresh}>
         {tNoOptions('platform_management_refresh', '刷新')}
       </Button>
     </div>
@@ -129,7 +165,13 @@ const BudgetOperationCell: FC<BudgetOperationCellProps> = ({
   onEnabledChange,
   onSave,
 }) => (
-  <div className="flex flex-col items-start gap-[8px]">
+  <div
+    className="flex min-w-[180px] flex-col items-start gap-[10px] rounded-[12px] border border-solid px-[12px] py-[10px]"
+    style={{
+      borderColor: 'rgba(148, 163, 184, 0.16)',
+      backgroundColor: '#FCFCFD',
+    }}
+  >
     <div className="flex items-center gap-[8px]">
       <Typography.Text className="text-[12px] coz-fg-secondary">
         {tNoOptions('platform_management_budgets_enabled', '启用规则')}
@@ -342,7 +384,7 @@ export const BillingBudgetsPanel: FC<BillingBudgetsPanelProps> = ({
   const isEmpty = !loading && !errorText && !rows.length;
 
   return (
-    <div className="rounded-[10px] border border-solid coz-stroke-primary px-[12px] py-[12px]">
+    <div className="rounded-[12px] bg-white border border-gray-100 px-6 py-6 shadow-sm">
       <BillingBudgetsHeader
         busy={busy}
         loading={loading}
@@ -354,7 +396,7 @@ export const BillingBudgetsPanel: FC<BillingBudgetsPanelProps> = ({
       />
 
       {errorText ? (
-        <div className="mt-[12px]">
+        <div className="mt-5">
           <PlatformErrorState
             errorText={errorText}
             onRetry={() => void load()}
@@ -363,24 +405,39 @@ export const BillingBudgetsPanel: FC<BillingBudgetsPanelProps> = ({
       ) : null}
 
       {isEmpty ? (
-        <div className="mt-[12px]">
+        <div className="mt-5">
           <PlatformEmptyState onAction={onResetFilters} />
         </div>
       ) : (
-        <div className="mt-[12px] overflow-hidden">
+        <div className="platform-management-budgets-table mt-5 overflow-hidden">
+          <style>{BUDGETS_TABLE_STYLE}</style>
           <Table
-            columns={columns}
-            dataSource={rows}
-            loading={loading}
-            pagination={false}
-            rowKey="key"
-            scroll={{ x: 1120 }}
+            scrollX={1120}
+            tableProps={{
+              columns,
+              dataSource: rows,
+              loading,
+              pagination: false,
+              rowKey: 'key',
+            }}
           />
         </div>
       )}
 
-      <div className="mt-[12px] rounded-[10px] coz-bg-plus px-[12px] py-[10px]">
-        <Typography.Text className="text-[12px] coz-fg-secondary">
+      <div className="mt-5 flex items-start gap-2 rounded-[8px] px-4 py-3 bg-[#FFF7E8] border border-[#FFE4BA]">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 16 16"
+          fill="none"
+          className="flex-shrink-0 mt-[1px]"
+        >
+          <path
+            d="M8 2C4.686 2 2 4.686 2 8s2.686 6 6 6 6-2.686 6-6-2.686-6-6-6zm.75 9a.75.75 0 01-1.5 0v-3a.75.75 0 011.5 0v3zM8 6.5a.75.75 0 110-1.5.75.75 0 010 1.5z"
+            fill="#FF7D00"
+          />
+        </svg>
+        <Typography.Text className="text-[12px] text-[#FF7D00]">
           {tNoOptions(
             'platform_management_budgets_note',
             '说明：当费用命中阈值时，将向平台管理员发送站内通知。',

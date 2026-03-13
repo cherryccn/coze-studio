@@ -53,23 +53,10 @@ interface BillingRecordsPanelProps {
   onResetFilters: () => void;
 }
 
-interface BillingRecordsToolbarProps {
-  keywordInput: string;
-  orderBy: BillingRecordSortField;
-  orderDirection: BillingRecordSortDirection;
-  exportInProgress: boolean;
-  hasExportFile: boolean;
-  onKeywordChange: (value: string) => void;
-  onSearch: () => void;
-  onExport: () => void;
-  onDownloadExport: () => void;
-  onSortFieldChange: (value: unknown) => void;
-  onSortDirectionChange: (value: unknown) => void;
-}
-
 interface BillingRecordsPaginationProps {
   page: number;
   size: number;
+  total: number;
   totalPages: number;
   loading: boolean;
   onPrevPage: () => void;
@@ -94,6 +81,39 @@ interface BillingRecordsHeaderProps {
 
 const tNoOptions = (key: string, fallback: string) =>
   I18n.t(key as unknown as I18nKeysNoOptionsType, {}, fallback);
+
+const RECORDS_TABLE_STYLE = `
+.platform-management-records-table table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.platform-management-records-table thead th {
+  background: #F7F8FA;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 12px 16px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.platform-management-records-table th,
+.platform-management-records-table td {
+  padding: 16px 16px;
+  border-bottom: 1px solid #F1F5F9;
+  color: #1F2937;
+  font-size: 14px;
+}
+
+.platform-management-records-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.platform-management-records-table tbody tr:hover td {
+  background: #F8FAFC;
+}
+`;
 
 const renderStatusTag = (status: string | undefined) => {
   switch (status) {
@@ -196,98 +216,29 @@ const getBillingRecordColumns = (): ColumnProps<BillingRecordItem>[] => [
   },
 ];
 
-const BillingRecordsToolbar: FC<BillingRecordsToolbarProps> = ({
-  keywordInput,
-  orderBy,
-  orderDirection,
-  exportInProgress,
-  hasExportFile,
-  onKeywordChange,
-  onSearch,
-  onExport,
-  onDownloadExport,
-  onSortFieldChange,
-  onSortDirectionChange,
-}) => (
-  <div className="flex flex-wrap items-center justify-end gap-[10px]">
-    <Input
-      value={keywordInput}
-      onChange={onKeywordChange}
-      onEnterPress={onSearch}
-      showClear
-      className="w-[220px] md:w-[280px]"
-      prefix={<IconCozMagnifier className="text-[16px] coz-fg-secondary" />}
-      placeholder={tNoOptions(
-        'platform_management_records_search_placeholder',
-        '搜索空间名/项目名',
-      )}
-    />
-    <Button
-      onClick={onSearch}
-      className="px-[16px] border border-solid coz-stroke-primary"
-      style={{ backgroundColor: '#F2F3F5', color: '#1F2329' }}
-    >
-      {tNoOptions('platform_management_records_search', '查询')}
-    </Button>
-    <Button
-      onClick={onExport}
-      loading={exportInProgress}
-      disabled={exportInProgress}
-    >
-      {exportInProgress
-        ? tNoOptions('platform_management_records_exporting', '导出中...')
-        : tNoOptions('platform_management_records_export', '导出')}
-    </Button>
-    {hasExportFile ? (
-      <Button
-        theme="light"
-        onClick={onDownloadExport}
-        className="px-[16px] border border-solid coz-stroke-primary"
-        style={{ backgroundColor: '#F2F3F5', color: '#1F2329' }}
-      >
-        {tNoOptions('platform_management_records_download_export', '下载文件')}
-      </Button>
-    ) : null}
-    <Select
-      className="w-[130px]"
-      value={orderBy}
-      optionList={SORT_FIELD_OPTIONS}
-      onChange={onSortFieldChange}
-    />
-    <Select
-      className="w-[110px]"
-      value={orderDirection}
-      optionList={SORT_DIRECTION_OPTIONS}
-      onChange={onSortDirectionChange}
-    />
-  </div>
-);
-
 const BillingRecordsPagination: FC<BillingRecordsPaginationProps> = ({
   page,
   size,
+  total,
   totalPages,
   loading,
   onPrevPage,
   onNextPage,
-}) => (
-  <div className="mt-[12px] flex flex-wrap items-center justify-between gap-[12px]">
-    <Typography.Text className="text-[12px] coz-fg-secondary">
-      {tNoOptions(
-        'platform_management_records_pagination',
-        `第 ${page} / ${totalPages} 页，每页 ${size} 条`,
-      )}
-    </Typography.Text>
-    <div className="flex items-center gap-[8px]">
-      <Button
-        size="small"
-        disabled={page <= 1 || loading}
-        onClick={onPrevPage}
-        className="px-[12px] border border-solid coz-stroke-primary"
-        style={{ backgroundColor: '#F2F3F5', color: '#1F2329' }}
-      >
+}) => {
+  const from = (page - 1) * size + 1;
+  const to = Math.min(page * size, total);
+
+  return (
+    <div className="mt-[16px] flex flex-wrap items-center justify-center gap-[16px] rounded-[14px] bg-[#F7F8FA] px-[14px] py-[12px]">
+      <Button size="small" disabled={page <= 1 || loading} onClick={onPrevPage}>
         {tNoOptions('platform_management_records_prev_page', '上一页')}
       </Button>
+      <Typography.Text className="text-[12px] coz-fg-secondary">
+        {tNoOptions(
+          'platform_management_records_pagination',
+          `显示第 ${from} 至 ${to} 条，共 ${total} 条数据`,
+        )}
+      </Typography.Text>
       <Button
         size="small"
         disabled={page >= totalPages || loading}
@@ -296,8 +247,8 @@ const BillingRecordsPagination: FC<BillingRecordsPaginationProps> = ({
         {tNoOptions('platform_management_records_next_page', '下一页')}
       </Button>
     </div>
-  </div>
-);
+  );
+};
 
 const BillingRecordsHeader: FC<BillingRecordsHeaderProps> = ({
   total,
@@ -314,35 +265,72 @@ const BillingRecordsHeader: FC<BillingRecordsHeaderProps> = ({
   onSortFieldChange,
   onSortDirectionChange,
 }) => (
-  <div className="flex flex-wrap items-center justify-between gap-[12px]">
-    <div className="flex flex-col gap-[4px]">
-      <Typography.Title heading={5} className="!mb-0">
-        {tNoOptions('platform_management_records_title', '账单明细')}
-      </Typography.Title>
-      <Typography.Text className="text-[12px] coz-fg-secondary">
-        {tNoOptions('platform_management_records_total', `共 ${total} 条记录`)}
-      </Typography.Text>
+  <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="min-w-0 flex-1">
+      <div className="flex flex-wrap items-center gap-3">
+        <Typography.Title
+          heading={5}
+          className="!mb-0 text-[18px] font-semibold text-gray-900"
+        >
+          {tNoOptions('platform_management_records_title', '账单明细')}
+        </Typography.Title>
+        <span className="rounded-full px-[10px] py-[2px] text-[12px] font-[500] bg-gray-100 text-gray-600">
+          {total}
+        </span>
+      </div>
       {exportStatusText ? (
         <Typography.Text
-          className={`text-[12px] ${exportStatusText.className}`}
+          className={`mt-[6px] block text-[12px] ${exportStatusText.className}`}
         >
           {exportStatusText.text}
         </Typography.Text>
       ) : null}
     </div>
-    <BillingRecordsToolbar
-      keywordInput={keywordInput}
-      orderBy={orderBy}
-      orderDirection={orderDirection}
-      exportInProgress={exportInProgress}
-      hasExportFile={hasExportFile}
-      onKeywordChange={onKeywordChange}
-      onSearch={onSearch}
-      onExport={onExport}
-      onDownloadExport={onDownloadExport}
-      onSortFieldChange={onSortFieldChange}
-      onSortDirectionChange={onSortDirectionChange}
-    />
+    <div className="flex flex-wrap items-center justify-end gap-3">
+      <Input
+        value={keywordInput}
+        onChange={onKeywordChange}
+        onEnterPress={onSearch}
+        showClear
+        className="w-[240px]"
+        prefix={<IconCozMagnifier className="text-[16px] text-gray-400" />}
+        placeholder={tNoOptions(
+          'platform_management_records_search_placeholder',
+          '搜索空间/项目名',
+        )}
+      />
+      <Select
+        className="w-[120px]"
+        value={orderBy}
+        optionList={SORT_FIELD_OPTIONS}
+        onChange={onSortFieldChange}
+      />
+      <Select
+        className="w-[100px]"
+        value={orderDirection}
+        optionList={SORT_DIRECTION_OPTIONS}
+        onChange={onSortDirectionChange}
+      />
+      <Button
+        type="primary"
+        onClick={onExport}
+        loading={exportInProgress}
+        disabled={exportInProgress}
+        className="bg-[#3370FF] hover:bg-[#245BDB]"
+      >
+        {exportInProgress
+          ? tNoOptions('platform_management_records_exporting', '导出中...')
+          : tNoOptions('platform_management_records_export', '导出')}
+      </Button>
+      {hasExportFile ? (
+        <Button onClick={onDownloadExport}>
+          {tNoOptions(
+            'platform_management_records_download_export',
+            '下载文件',
+          )}
+        </Button>
+      ) : null}
+    </div>
   </div>
 );
 
@@ -376,7 +364,7 @@ export const BillingRecordsPanel: FC<BillingRecordsPanelProps> = ({
   } = useBillingRecordsExport({ filters, query });
 
   return (
-    <div className="rounded-[10px] border border-solid coz-stroke-primary px-[12px] py-[12px]">
+    <div className="rounded-[12px] bg-white border border-gray-100 px-6 py-6 shadow-sm">
       <BillingRecordsHeader
         total={data.total ?? 0}
         keywordInput={keywordInput}
@@ -394,7 +382,7 @@ export const BillingRecordsPanel: FC<BillingRecordsPanelProps> = ({
       />
 
       {errorText ? (
-        <div className="mt-[12px]">
+        <div className="mt-5">
           <PlatformErrorState
             errorText={errorText}
             onRetry={() => void load()}
@@ -403,25 +391,29 @@ export const BillingRecordsPanel: FC<BillingRecordsPanelProps> = ({
       ) : null}
 
       {isEmpty ? (
-        <div className="mt-[12px]">
+        <div className="mt-5">
           <PlatformEmptyState onAction={onResetFilters} />
         </div>
       ) : (
         <>
-          <div className="mt-[12px] overflow-hidden">
+          <div className="platform-management-records-table mt-5 overflow-hidden">
+            <style>{RECORDS_TABLE_STYLE}</style>
             <Table
-              columns={columns}
-              dataSource={data.list ?? []}
-              loading={loading}
-              pagination={false}
-              rowKey="id"
-              scroll={{ x: 1380 }}
+              scrollX={1380}
+              tableProps={{
+                columns,
+                dataSource: data.list ?? [],
+                loading,
+                pagination: false,
+                rowKey: 'id',
+              }}
             />
           </div>
 
           <BillingRecordsPagination
             page={query.page}
             size={query.size}
+            total={data.total ?? 0}
             totalPages={totalPages}
             loading={loading}
             onPrevPage={handlePrevPage}

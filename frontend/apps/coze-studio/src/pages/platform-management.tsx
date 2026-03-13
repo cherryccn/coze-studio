@@ -19,7 +19,7 @@ import { type FC, useCallback, useMemo, useState } from 'react';
 import { useSpaceStore } from '@coze-foundation/space-store-adapter';
 import { usePlatformManagementAccess } from '@coze-foundation/account-adapter';
 import { I18n, type I18nKeysNoOptionsType } from '@coze-arch/i18n';
-import { Button, Select, Tabs, Typography } from '@coze-arch/coze-design';
+import { Tabs, Typography } from '@coze-arch/coze-design';
 
 import type {
   FilterSummaryItem,
@@ -28,6 +28,7 @@ import type {
   TimeRangeKey,
 } from './platform-management-modules/types';
 import { StatsPanel } from './platform-management-modules/stats-panel';
+import { PlatformManagementHeader } from './platform-management-modules/platform-management-header';
 import { FilterSummaryChips } from './platform-management-modules/filter-summary-chips';
 import { BillingRecordsPanel } from './platform-management-modules/billing-records-panel';
 import { BillingOverviewPanel } from './platform-management-modules/billing-overview-panel';
@@ -110,55 +111,30 @@ const PROJECT_TYPE_OPTION_DEFS: Array<{
   },
 ];
 
-interface PlatformFilterBarProps {
-  filters: PlatformFilters;
-  timeRangeOptions: Array<{ value: TimeRangeKey; label: string }>;
-  spaceOptions: Array<{ value: string; label: string }>;
-  projectTypeOptions: Array<{ value: ProjectTypeKey; label: string }>;
-  onFilterChange: (patch: Partial<PlatformFilters>) => void;
-  onReset: () => void;
-}
+const PAGE_SURFACE_STYLE = {
+  background:
+    'linear-gradient(180deg, rgba(244,247,251,0.96) 0%, rgba(248,250,252,1) 100%)',
+};
 
-const PlatformFilterBar: FC<PlatformFilterBarProps> = ({
-  filters,
-  timeRangeOptions,
-  spaceOptions,
-  projectTypeOptions,
-  onFilterChange,
-  onReset,
-}) => (
-  <div className="coz-mg-card rounded-[12px] px-[16px] py-[12px] border border-solid coz-stroke-primary mb-[16px]">
-    <div className="flex flex-wrap items-center gap-[12px]">
-      <Select
-        className="w-[160px]"
-        value={filters.timeRange}
-        optionList={timeRangeOptions}
-        onChange={value => onFilterChange({ timeRange: value as TimeRangeKey })}
-      />
-      <Select
-        className="w-[180px]"
-        value={filters.spaceId}
-        optionList={spaceOptions}
-        onChange={value => onFilterChange({ spaceId: String(value) })}
-      />
-      <Select
-        className="w-[160px]"
-        value={filters.projectType}
-        optionList={projectTypeOptions}
-        onChange={value =>
-          onFilterChange({ projectType: value as ProjectTypeKey })
-        }
-      />
-      <Button
-        onClick={onReset}
-        className="px-[16px] border border-solid coz-stroke-primary"
-        style={{ backgroundColor: '#F2F3F5', color: '#1F2329' }}
-      >
-        {tNoOptions('platform_management_filter_reset', '重置')}
-      </Button>
-    </div>
-  </div>
-);
+const PANEL_SURFACE_STYLE = {
+  backgroundColor: '#FFFFFF',
+  borderColor: 'rgba(15, 23, 42, 0.08)',
+  boxShadow: '0 18px 48px rgba(15, 23, 42, 0.04)',
+};
+
+const PLATFORM_TABS_STYLE = `
+.platform-management-tabs .coz-tabs-nav {
+  margin-bottom: 0 !important;
+}
+.platform-management-tabs .coz-tabs-tab {
+  padding: 16px 0;
+  font-size: 15px;
+  margin-right: 32px;
+}
+.platform-management-tabs .coz-tabs-tab-active {
+  font-weight: 600;
+}
+`;
 
 interface PlatformTabPlaceholderProps {
   description: string;
@@ -169,11 +145,16 @@ const PlatformTabPlaceholder: FC<PlatformTabPlaceholderProps> = ({
   description,
   filterSummary,
 }) => (
-  <div className="py-[20px] flex flex-col gap-[12px]">
-    <Typography.Text className="coz-fg-secondary">
-      {description}
-    </Typography.Text>
-    <FilterSummaryChips filterSummary={filterSummary} />
+  <div
+    className="rounded-[16px] border border-solid px-[18px] py-[20px]"
+    style={PANEL_SURFACE_STYLE}
+  >
+    <div className="flex flex-col gap-[12px]">
+      <Typography.Text className="coz-fg-secondary">
+        {description}
+      </Typography.Text>
+      <FilterSummaryChips filterSummary={filterSummary} />
+    </div>
   </div>
 );
 
@@ -197,12 +178,18 @@ const buildPlatformTabs = (): PlatformManagementTab[] => [
 ];
 
 const PlatformManagementNoPermission: FC = () => (
-  <div className="w-full h-full px-[24px] py-[24px]">
-    <div className="max-w-[1200px]">
+  <div
+    className="w-full min-h-full px-[24px] py-[24px]"
+    style={PAGE_SURFACE_STYLE}
+  >
+    <div className="mx-auto max-w-[1280px]">
       <Typography.Title heading={3} className="mb-[20px]">
         {tNoOptions('platform_management_menu_title', '平台管理')}
       </Typography.Title>
-      <div className="coz-mg-card rounded-[12px] px-[16px] py-[24px] border border-solid coz-stroke-primary">
+      <div
+        className="rounded-[18px] border border-solid px-[18px] py-[28px]"
+        style={PANEL_SURFACE_STYLE}
+      >
         <Typography.Text className="coz-fg-secondary block">
           {tNoOptions(
             'platform_management_no_permission',
@@ -282,6 +269,8 @@ const PlatformManagementPage: FC = () => {
 
   const [activeTab, setActiveTab] = useState(tabs[0]?.key ?? 'billing');
   const [filters, setFilters] = useState<PlatformFilters>(DEFAULT_FILTERS);
+  const [draftFilters, setDraftFilters] =
+    useState<PlatformFilters>(DEFAULT_FILTERS);
 
   const timeRangeOptions = useMemo(
     () =>
@@ -315,14 +304,22 @@ const PlatformManagementPage: FC = () => {
     [spaceOptions],
   );
 
-  const handleFilterChange = useCallback((patch: Partial<PlatformFilters>) => {
-    setFilters(previous => ({
-      ...previous,
-      ...patch,
-    }));
-  }, []);
+  const handleDraftFilterChange = useCallback(
+    (patch: Partial<PlatformFilters>) => {
+      setDraftFilters(previous => ({
+        ...previous,
+        ...patch,
+      }));
+    },
+    [],
+  );
+
+  const handleApplyFilters = useCallback(() => {
+    setFilters(draftFilters);
+  }, [draftFilters]);
 
   const handleReset = useCallback(() => {
+    setDraftFilters(DEFAULT_FILTERS);
     setFilters(DEFAULT_FILTERS);
   }, []);
 
@@ -342,60 +339,66 @@ const PlatformManagementPage: FC = () => {
   }
 
   return (
-    <div className="w-full h-full px-[24px] py-[24px]">
-      <div className="max-w-[1200px]">
-        <Typography.Title heading={3} className="mb-[20px]">
-          {tNoOptions('platform_management_page_title', '平台管理')}
-        </Typography.Title>
-        <PlatformFilterBar
-          filters={filters}
-          timeRangeOptions={timeRangeOptions}
-          spaceOptions={spaceOptions}
-          projectTypeOptions={projectTypeOptions}
-          onFilterChange={handleFilterChange}
-          onReset={handleReset}
-        />
-        <div className="coz-mg-card rounded-[12px] px-[16px] py-[12px] border border-solid coz-stroke-primary">
+    <div className="w-full min-h-screen bg-[#F4F5F7] text-[#1f2937] flex flex-col">
+      <style>{PLATFORM_TABS_STYLE}</style>
+
+      {/* Header section matching provided UI */}
+      <PlatformManagementHeader
+        draftFilters={draftFilters}
+        timeRangeOptions={timeRangeOptions}
+        spaceOptions={spaceOptions}
+        projectTypeOptions={projectTypeOptions}
+        onDraftFilterChange={handleDraftFilterChange}
+        onApply={handleApplyFilters}
+        onReset={handleReset}
+      />
+
+      {/* Tabs Section */}
+      <div className="platform-management-tabs bg-white border-b border-gray-200 px-8">
+        <div className="max-w-[1600px] mx-auto">
           <Tabs
             activeKey={activeTab}
             onChange={key => setActiveTab(String(key))}
           >
             {tabs.map(tab => (
-              <TabPane tab={tab.label} itemKey={tab.key} key={tab.key}>
-                {tab.key === 'billing' ? (
-                  <div className="flex flex-col gap-[16px]">
-                    <BillingOverviewPanel
-                      filters={filters}
-                      filterSummary={filterSummary}
-                      onResetFilters={handleReset}
-                    />
-                    <BillingRecordsPanel
-                      filters={filters}
-                      onResetFilters={handleReset}
-                    />
-                    <BillingBudgetsPanel
-                      selectedSpaceId={filters.spaceId}
-                      spaceOptions={spaceOptions}
-                      onResetFilters={handleReset}
-                    />
-                  </div>
-                ) : tab.key === 'stats' ? (
-                  <StatsPanel
-                    filters={filters}
-                    filterSummary={filterSummary}
-                    onResetFilters={handleReset}
-                  />
-                ) : (
-                  <PlatformTabPlaceholder
-                    description={tab.placeholder}
-                    filterSummary={filterSummary}
-                  />
-                )}
-              </TabPane>
+              <TabPane tab={tab.label} itemKey={tab.key} key={tab.key} />
             ))}
           </Tabs>
         </div>
       </div>
+
+      {/* Main Content Area */}
+      <main className="flex-1 w-full max-w-[1600px] mx-auto p-8">
+        {activeTab === 'billing' ? (
+          <div className="flex flex-col gap-6">
+            <BillingOverviewPanel
+              filters={filters}
+              filterSummary={filterSummary}
+              onResetFilters={handleReset}
+            />
+            <BillingRecordsPanel
+              filters={filters}
+              onResetFilters={handleReset}
+            />
+            <BillingBudgetsPanel
+              selectedSpaceId={filters.spaceId}
+              spaceOptions={spaceOptions}
+              onResetFilters={handleReset}
+            />
+          </div>
+        ) : activeTab === 'stats' ? (
+          <StatsPanel
+            filters={filters}
+            filterSummary={filterSummary}
+            onResetFilters={handleReset}
+          />
+        ) : (
+          <PlatformTabPlaceholder
+            description={tabs.find(t => t.key === activeTab)?.placeholder || ''}
+            filterSummary={filterSummary}
+          />
+        )}
+      </main>
     </div>
   );
 };

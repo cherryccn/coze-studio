@@ -57,9 +57,12 @@ function MockInput({
 }) {
   return (
     <input
-      value={value}
+      data-testid="mock-input"
+      value={value ?? ''}
       placeholder={placeholder}
-      onChange={event => onChange?.((event.target as HTMLInputElement).value)}
+      onChange={event => {
+        onChange?.((event.target as HTMLInputElement).value);
+      }}
       onKeyDown={event => {
         if (event.key === 'Enter') {
           onEnterPress?.();
@@ -93,6 +96,7 @@ function MockTable({
   columns,
   dataSource,
   loading,
+  tableProps,
 }: {
   columns?: Array<{
     dataIndex?: string;
@@ -104,10 +108,25 @@ function MockTable({
   }>;
   dataSource?: Array<Record<string, unknown>>;
   loading?: boolean;
+  tableProps?: {
+    columns?: Array<{
+      dataIndex?: string;
+      render?: (
+        value: unknown,
+        record: Record<string, unknown>,
+        index: number,
+      ) => unknown;
+    }>;
+    dataSource?: Array<Record<string, unknown>>;
+    loading?: boolean;
+  };
 }) {
-  const firstRow = dataSource?.[0];
+  const effectiveColumns = columns ?? tableProps?.columns;
+  const effectiveDataSource = dataSource ?? tableProps?.dataSource;
+  const effectiveLoading = loading ?? tableProps?.loading;
+  const firstRow = effectiveDataSource?.[0];
 
-  columns?.forEach(column => {
+  effectiveColumns?.forEach(column => {
     if (column.render && firstRow) {
       column.render(
         column.dataIndex ? firstRow[column.dataIndex] : undefined,
@@ -119,8 +138,10 @@ function MockTable({
 
   return (
     <div>
-      {`table:${loading ? 'loading' : 'idle'}:${dataSource?.length ?? 0}:${
-        dataSource
+      {`table:${effectiveLoading ? 'loading' : 'idle'}:${
+        effectiveDataSource?.length ?? 0
+      }:${
+        effectiveDataSource
           ?.map(item => item.project_name ?? item.id ?? '--')
           .join('|') ?? ''
       }`}
@@ -275,6 +296,7 @@ const setNativeInputValue = (input: HTMLInputElement, value: string) => {
 
   valueSetter?.call(input, value);
   input.dispatchEvent(new Event('input', { bubbles: true }));
+  input.dispatchEvent(new Event('change', { bubbles: true }));
 };
 
 describe('billing-records-panel', () => {
@@ -416,18 +438,16 @@ describe('billing-records-panel', () => {
       await flushPromises();
     });
 
-    const input = container.querySelector('input');
+    const input = container.querySelector('input') as HTMLInputElement;
     const selects = Array.from(container.querySelectorAll('select'));
 
     act(() => {
-      if (input instanceof HTMLInputElement) {
-        setNativeInputValue(input, '  Alpha  ');
-      }
+      setNativeInputValue(input, '  Alpha  ');
     });
 
     await act(async () => {
-      getButtonByText(container, '查询')?.dispatchEvent(
-        new MouseEvent('click', { bubbles: true }),
+      input.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
       );
       await flushPromises();
     });
@@ -603,17 +623,15 @@ describe('billing-records-panel', () => {
       await flushPromises();
     });
 
-    const input = container.querySelector('input');
+    const input = container.querySelector('input') as HTMLInputElement;
 
     act(() => {
-      if (input instanceof HTMLInputElement) {
-        setNativeInputValue(input, 'Alpha');
-      }
+      setNativeInputValue(input, 'Alpha');
     });
 
     await act(async () => {
-      getButtonByText(container, '查询')?.dispatchEvent(
-        new MouseEvent('click', { bubbles: true }),
+      input.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
       );
       await flushPromises();
     });

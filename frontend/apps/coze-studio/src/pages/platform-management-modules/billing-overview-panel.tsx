@@ -20,12 +20,17 @@ import { I18n, type I18nKeysNoOptionsType } from '@coze-arch/i18n';
 import { Typography } from '@coze-arch/coze-design';
 
 import type { FilterSummaryItem, PlatformFilters, TimeRangeKey } from './types';
+import { TrendLineChart } from './trend-line-chart';
 import {
   PlatformEmptyState,
   PlatformErrorState,
   PlatformLoadingState,
 } from './platform-request-states';
-import { FilterSummaryChips } from './filter-summary-chips';
+import {
+  BillingTopSpacesSection,
+  type TopSpacesOrder,
+  type BillingTopSpaceItem,
+} from './billing-top-spaces';
 
 interface PlatformApiResponse<TData> {
   code?: number;
@@ -50,13 +55,6 @@ interface BillingTokenTrendItem {
   tokens?: number;
 }
 
-interface BillingTopSpaceItem {
-  space_id?: number | string;
-  space_name?: string;
-  amount?: string;
-  tokens?: number;
-}
-
 interface BillingOverviewResponseData {
   cards?: BillingOverviewCards;
   cost_trend?: BillingCostTrendItem[];
@@ -78,8 +76,6 @@ const MILLIS_PER_DAY =
   HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MILLIS_PER_SECOND;
 const LAST_7_DAYS_OFFSET = 6;
 const LAST_30_DAYS_OFFSET = 29;
-const RANKING_FALLBACK_INDEX_START = 1;
-const DISPLAY_LIMIT = 10;
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('zh-CN', {
   minimumFractionDigits: 2,
@@ -167,12 +163,16 @@ const resolveRequestErrorText = (error: unknown) => {
   return tNoOptions('platform_management_overview_load_failed', '数据加载失败');
 };
 
-const buildBillingOverviewUrl = (filters: PlatformFilters) => {
+const buildBillingOverviewUrl = (
+  filters: PlatformFilters,
+  topSpacesOrder: TopSpacesOrder = 'desc',
+) => {
   const timeRangeParams = resolveOverviewTimeRange(filters.timeRange);
   const searchParams = new URLSearchParams({
     start_time: String(timeRangeParams.start_time),
     end_time: String(timeRangeParams.end_time),
     project_type: filters.projectType,
+    top_spaces_order: topSpacesOrder,
   });
 
   if (filters.spaceId !== 'all') {
@@ -193,10 +193,16 @@ const parseBillingOverviewPayload = async (
   }
 };
 
-const fetchBillingOverview = async (filters: PlatformFilters) => {
-  const response = await fetch(buildBillingOverviewUrl(filters), {
-    credentials: 'include',
-  });
+const fetchBillingOverview = async (
+  filters: PlatformFilters,
+  topSpacesOrder: TopSpacesOrder = 'desc',
+) => {
+  const response = await fetch(
+    buildBillingOverviewUrl(filters, topSpacesOrder),
+    {
+      credentials: 'include',
+    },
+  );
   const payload = await parseBillingOverviewPayload(response);
 
   if (!response.ok) {
@@ -221,12 +227,13 @@ const useBillingOverviewData = (filters: PlatformFilters) => {
   );
   const [loading, setLoading] = useState(false);
   const [errorText, setErrorText] = useState('');
+  const [topSpacesOrder, setTopSpacesOrder] = useState<TopSpacesOrder>('desc');
 
   const load = useCallback(async () => {
     setLoading(true);
     setErrorText('');
     try {
-      const nextData = await fetchBillingOverview(filters);
+      const nextData = await fetchBillingOverview(filters, topSpacesOrder);
       setData(nextData);
     } catch (error) {
       setErrorText(resolveRequestErrorText(error));
@@ -234,17 +241,23 @@ const useBillingOverviewData = (filters: PlatformFilters) => {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [filters, topSpacesOrder]);
 
   useEffect(() => {
     void load();
   }, [load]);
+
+  const toggleTopSpacesOrder = useCallback(() => {
+    setTopSpacesOrder(prev => (prev === 'desc' ? 'asc' : 'desc'));
+  }, []);
 
   return {
     data,
     loading,
     errorText,
     reload: load,
+    topSpacesOrder,
+    toggleTopSpacesOrder,
   };
 };
 
@@ -261,117 +274,44 @@ interface BillingCardsGridProps {
   cards?: BillingOverviewCards;
 }
 
-const BillingCardsGrid: FC<BillingCardsGridProps> = ({ cards }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[12px]">
-    <div className="rounded-[10px] border border-solid coz-stroke-primary px-[12px] py-[12px]">
-      <Typography.Text className="text-[12px] coz-fg-secondary">
-        {tNoOptions('platform_management_card_today_cost', '今日费用')}
-      </Typography.Text>
-      <Typography.Title heading={4} className="!mb-0 mt-[8px]">
-        {formatCurrency(cards?.today_cost)}
-      </Typography.Title>
-    </div>
-    <div className="rounded-[10px] border border-solid coz-stroke-primary px-[12px] py-[12px]">
-      <Typography.Text className="text-[12px] coz-fg-secondary">
-        {tNoOptions('platform_management_card_month_cost', '本月累计费用')}
-      </Typography.Text>
-      <Typography.Title heading={4} className="!mb-0 mt-[8px]">
-        {formatCurrency(cards?.month_cost)}
-      </Typography.Title>
-    </div>
-    <div className="rounded-[10px] border border-solid coz-stroke-primary px-[12px] py-[12px]">
-      <Typography.Text className="text-[12px] coz-fg-secondary">
-        {tNoOptions('platform_management_card_tokens', 'Token 消耗')}
-      </Typography.Text>
-      <Typography.Title heading={4} className="!mb-0 mt-[8px]">
-        {formatNumber(cards?.token_consumption)}
-      </Typography.Title>
-    </div>
-    <div className="rounded-[10px] border border-solid coz-stroke-primary px-[12px] py-[12px]">
-      <Typography.Text className="text-[12px] coz-fg-secondary">
-        {tNoOptions('platform_management_card_active_spaces', '活跃空间数')}
-      </Typography.Text>
-      <Typography.Title heading={4} className="!mb-0 mt-[8px]">
-        {formatNumber(cards?.active_space_count)}
-      </Typography.Title>
-    </div>
-  </div>
-);
-
-interface TrendListProps {
-  title: string;
-  emptyText: string;
-  rows: Array<{ date?: string; value?: string | number }>;
-  valueFormatter: (value: string | number | undefined) => string;
-}
-
-const TrendList: FC<TrendListProps> = ({
-  title,
-  emptyText,
-  rows,
-  valueFormatter,
-}) => (
-  <div className="rounded-[10px] border border-solid coz-stroke-primary px-[12px] py-[12px]">
-    <Typography.Text className="coz-fg-secondary">{title}</Typography.Text>
-    <div className="mt-[10px] flex flex-col gap-[6px]">
-      {rows.length ? (
-        rows.slice(0, DISPLAY_LIMIT).map(item => (
-          <div key={item.date} className="flex items-center justify-between">
-            <Typography.Text className="text-[12px] coz-fg-secondary">
-              {item.date || '--'}
-            </Typography.Text>
-            <Typography.Text className="text-[12px]">
-              {valueFormatter(item.value)}
-            </Typography.Text>
-          </div>
-        ))
-      ) : (
-        <Typography.Text className="text-[12px] coz-fg-secondary">
-          {emptyText}
-        </Typography.Text>
-      )}
-    </div>
-  </div>
-);
-
-interface BillingTopSpacesSectionProps {
-  topSpaces: BillingTopSpaceItem[];
-}
-
-const BillingTopSpacesSection: FC<BillingTopSpacesSectionProps> = ({
-  topSpaces,
-}) => (
-  <div className="rounded-[10px] border border-solid coz-stroke-primary px-[12px] py-[12px]">
-    <Typography.Text className="coz-fg-secondary">
-      {tNoOptions('platform_management_top_spaces', 'Top 空间成本排行')}
+const KpiCard: FC<{
+  label: string;
+  value: string;
+}> = ({ label, value }) => (
+  <div
+    className="rounded-[12px] bg-white border border-gray-100 p-6 flex flex-col justify-center"
+    style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)' }}
+  >
+    <Typography.Text className="text-[14px] text-gray-500 font-medium">
+      {label}
     </Typography.Text>
-    <div className="mt-[10px] flex flex-col gap-[6px]">
-      {topSpaces.length ? (
-        topSpaces.slice(0, DISPLAY_LIMIT).map((item, index) => (
-          <div
-            key={`${item.space_id ?? index + RANKING_FALLBACK_INDEX_START}`}
-            className="grid grid-cols-[40px,1fr,140px,140px] items-center gap-[8px]"
-          >
-            <Typography.Text className="text-[12px] coz-fg-secondary">
-              {index + RANKING_FALLBACK_INDEX_START}
-            </Typography.Text>
-            <Typography.Text className="text-[12px]">
-              {item.space_name || String(item.space_id || '--')}
-            </Typography.Text>
-            <Typography.Text className="text-[12px] text-right">
-              {formatCurrency(item.amount)}
-            </Typography.Text>
-            <Typography.Text className="text-[12px] text-right">
-              {formatNumber(item.tokens)}
-            </Typography.Text>
-          </div>
-        ))
-      ) : (
-        <Typography.Text className="text-[12px] coz-fg-secondary">
-          {tNoOptions('platform_management_empty_top_spaces', '暂无排行数据')}
-        </Typography.Text>
-      )}
-    </div>
+    <Typography.Title
+      heading={2}
+      className="!mb-0 !mt-2 text-[28px] font-bold text-gray-900"
+    >
+      {value}
+    </Typography.Title>
+  </div>
+);
+
+const BillingCardsGrid: FC<BillingCardsGridProps> = ({ cards }) => (
+  <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+    <KpiCard
+      label={tNoOptions('platform_management_card_today_cost', '今日费用')}
+      value={formatCurrency(cards?.today_cost)}
+    />
+    <KpiCard
+      label={tNoOptions('platform_management_card_month_cost', '本月累计费用')}
+      value={formatCurrency(cards?.month_cost)}
+    />
+    <KpiCard
+      label={tNoOptions('platform_management_card_tokens', 'Token 消耗')}
+      value={formatNumber(cards?.token_consumption)}
+    />
+    <KpiCard
+      label={tNoOptions('platform_management_card_active_spaces', '活跃空间数')}
+      value={formatNumber(cards?.active_space_count)}
+    />
   </div>
 );
 
@@ -380,13 +320,19 @@ export const BillingOverviewPanel: FC<BillingOverviewPanelProps> = ({
   filterSummary,
   onResetFilters,
 }) => {
-  const { data, loading, errorText, reload } = useBillingOverviewData(filters);
+  const {
+    data,
+    loading,
+    errorText,
+    reload,
+    topSpacesOrder,
+    toggleTopSpacesOrder,
+  } = useBillingOverviewData(filters);
   const isEmpty = isBillingOverviewEmpty(data);
   const shouldShowContent = !loading && !errorText && !isEmpty;
 
   return (
-    <div className="py-[16px] flex flex-col gap-[16px]">
-      <FilterSummaryChips filterSummary={filterSummary} />
+    <div className="py-[4px] flex flex-col gap-6">
       {loading ? <PlatformLoadingState /> : null}
       {errorText ? (
         <PlatformErrorState
@@ -399,37 +345,53 @@ export const BillingOverviewPanel: FC<BillingOverviewPanelProps> = ({
       ) : null}
       {shouldShowContent ? (
         <>
-          <BillingCardsGrid cards={data.cards} />
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-[12px]">
-            <TrendList
-              title={tNoOptions('platform_management_cost_trend', '费用趋势')}
-              emptyText={tNoOptions(
-                'platform_management_empty_trend',
-                '暂无趋势数据',
-              )}
-              rows={(data.cost_trend || []).map(item => ({
-                date: item.date,
-                value: item.amount,
-              }))}
-              valueFormatter={formatCurrency}
-            />
-            <TrendList
-              title={tNoOptions(
-                'platform_management_token_trend',
-                'Token 趋势',
-              )}
-              emptyText={tNoOptions(
-                'platform_management_empty_trend',
-                '暂无趋势数据',
-              )}
-              rows={(data.token_trend || []).map(item => ({
-                date: item.date,
-                value: item.tokens,
-              }))}
-              valueFormatter={formatNumber}
+          <div>
+            <Typography.Title
+              heading={5}
+              className="!mb-4 text-[18px] font-semibold text-gray-900"
+            >
+              {tNoOptions('platform_management_overview_title', '计费总览')}
+            </Typography.Title>
+            <BillingCardsGrid cards={data.cards} />
+          </div>
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+            <div className="bg-white rounded-[12px] border border-gray-100 p-5 shadow-sm">
+              <TrendLineChart
+                title={tNoOptions('platform_management_cost_trend', '费用趋势')}
+                data={(data.cost_trend || []).map(item => ({
+                  label: item.date || '',
+                  value: toFiniteNumber(item.amount),
+                }))}
+                valueFormatter={v => formatCurrency(v)}
+                color="#3370FF"
+              />
+            </div>
+            <div className="bg-white rounded-[12px] border border-gray-100 p-5 shadow-sm">
+              <TrendLineChart
+                title={tNoOptions(
+                  'platform_management_token_trend',
+                  'Token 趋势',
+                )}
+                data={(data.token_trend || []).map(item => ({
+                  label: item.date || '',
+                  value: toFiniteNumber(item.tokens),
+                }))}
+                valueFormatter={v => formatNumber(v)}
+                color="#7B61FF"
+              />
+            </div>
+          </div>
+          <div className="bg-white rounded-[12px] border border-gray-100 p-5 shadow-sm">
+            <BillingTopSpacesSection
+              topSpaces={data.top_spaces || []}
+              order={topSpacesOrder}
+              loading={loading}
+              onToggleOrder={toggleTopSpacesOrder}
+              formatCurrency={formatCurrency}
+              formatNumber={formatNumber}
+              toFiniteNumber={toFiniteNumber}
             />
           </div>
-          <BillingTopSpacesSection topSpaces={data.top_spaces || []} />
         </>
       ) : null}
     </div>

@@ -77,6 +77,7 @@ vi.mock('@coze-arch/i18n', () => ({
 }));
 
 vi.mock('@coze-arch/coze-design', () => ({
+  Button: MockButton,
   Typography: {
     Text: MockText,
     Title: MockTitle,
@@ -183,12 +184,10 @@ describe('billing-overview-panel', () => {
       await flushPromises();
     });
 
-    expect(container.textContent).toContain('summary:近7天|全部空间');
     expect(container.textContent).toContain('loading-state');
     expect(container.textContent).not.toContain('今日费用');
     expect(container.textContent).not.toContain('Top 空间成本排行');
   });
-
   it('renders empty state and triggers filter reset action for empty overview data', async () => {
     const onResetFilters = vi.fn();
     fetchMock.mockResolvedValue(
