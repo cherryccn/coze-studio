@@ -262,6 +262,60 @@ const buildFilterSummary = ({
   ];
 };
 
+const PlatformManagementContent: FC<{
+  activeTab: string;
+  filters: PlatformFilters;
+  filterSummary: FilterSummaryItem[];
+  tabs: PlatformManagementTab[];
+  spaceOptions: Array<{ value: string; label: string }>;
+  onResetFilters: () => void;
+}> = ({
+  activeTab,
+  filters,
+  filterSummary,
+  tabs,
+  spaceOptions,
+  onResetFilters,
+}) => {
+  if (activeTab === 'billing') {
+    return (
+      <div className="flex flex-col gap-6">
+        <BillingOverviewPanel
+          filters={filters}
+          filterSummary={filterSummary}
+          onResetFilters={onResetFilters}
+        />
+        <BillingRecordsPanel
+          filters={filters}
+          onResetFilters={onResetFilters}
+        />
+        <BillingBudgetsPanel
+          selectedSpaceId={filters.spaceId}
+          spaceOptions={spaceOptions}
+          onResetFilters={onResetFilters}
+        />
+      </div>
+    );
+  }
+
+  if (activeTab === 'stats') {
+    return (
+      <StatsPanel
+        filters={filters}
+        filterSummary={filterSummary}
+        onResetFilters={onResetFilters}
+      />
+    );
+  }
+
+  return (
+    <PlatformTabPlaceholder
+      description={tabs.find(t => t.key === activeTab)?.placeholder || ''}
+      filterSummary={filterSummary}
+    />
+  );
+};
+
 const PlatformManagementPage: FC = () => {
   const spaceList = useSpaceStore(state => state.spaceList);
   const hasPlatformManagementAccess = usePlatformManagementAccess();
@@ -343,61 +397,53 @@ const PlatformManagementPage: FC = () => {
       <style>{PLATFORM_TABS_STYLE}</style>
 
       {/* Header section matching provided UI */}
-      <PlatformManagementHeader
-        draftFilters={draftFilters}
-        timeRangeOptions={timeRangeOptions}
-        spaceOptions={spaceOptions}
-        projectTypeOptions={projectTypeOptions}
-        onDraftFilterChange={handleDraftFilterChange}
-        onApply={handleApplyFilters}
-        onReset={handleReset}
-      />
-
-      {/* Tabs Section */}
-      <div className="platform-management-tabs bg-white border-b border-gray-200 px-8">
+      <header className="bg-white px-8 pt-6 sticky top-0 z-50 shadow-sm border-b border-gray-200">
         <div className="max-w-[1600px] mx-auto">
-          <Tabs
-            activeKey={activeTab}
-            onChange={key => setActiveTab(String(key))}
-          >
-            {tabs.map(tab => (
-              <TabPane tab={tab.label} itemKey={tab.key} key={tab.key} />
-            ))}
-          </Tabs>
-        </div>
-      </div>
+          {/* Title and Tabs in one line */}
+          <div className="flex items-center gap-8 border-b border-gray-100">
+            <Typography.Title
+              heading={3}
+              className="text-[20px] font-semibold text-gray-900 !mb-[14px]"
+            >
+              {tNoOptions('platform_management_page_title', '平台管理')}
+            </Typography.Title>
+            <div className="platform-management-tabs flex-1">
+              <Tabs
+                activeKey={activeTab}
+                onChange={key => setActiveTab(String(key))}
+              >
+                {tabs.map(tab => (
+                  <TabPane tab={tab.label} itemKey={tab.key} key={tab.key} />
+                ))}
+              </Tabs>
+            </div>
+          </div>
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-[1600px] mx-auto p-8">
-        {activeTab === 'billing' ? (
-          <div className="flex flex-col gap-6">
-            <BillingOverviewPanel
-              filters={filters}
-              filterSummary={filterSummary}
-              onResetFilters={handleReset}
-            />
-            <BillingRecordsPanel
-              filters={filters}
-              onResetFilters={handleReset}
-            />
-            <BillingBudgetsPanel
-              selectedSpaceId={filters.spaceId}
+          {/* Filters section */}
+          <div className="py-4">
+            <PlatformManagementHeader
+              draftFilters={draftFilters}
+              timeRangeOptions={timeRangeOptions}
               spaceOptions={spaceOptions}
-              onResetFilters={handleReset}
+              projectTypeOptions={projectTypeOptions}
+              onDraftFilterChange={handleDraftFilterChange}
+              onApply={handleApplyFilters}
+              onReset={handleReset}
             />
           </div>
-        ) : activeTab === 'stats' ? (
-          <StatsPanel
-            filters={filters}
-            filterSummary={filterSummary}
-            onResetFilters={handleReset}
-          />
-        ) : (
-          <PlatformTabPlaceholder
-            description={tabs.find(t => t.key === activeTab)?.placeholder || ''}
-            filterSummary={filterSummary}
-          />
-        )}
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="flex-1 w-full max-w-[1600px] mx-auto p-6 md:p-8">
+        <PlatformManagementContent
+          activeTab={activeTab}
+          filters={filters}
+          filterSummary={filterSummary}
+          tabs={tabs}
+          spaceOptions={spaceOptions}
+          onResetFilters={handleReset}
+        />
       </main>
     </div>
   );

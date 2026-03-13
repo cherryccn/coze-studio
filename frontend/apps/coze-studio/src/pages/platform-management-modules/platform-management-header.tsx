@@ -43,76 +43,58 @@ export const PlatformManagementHeader: FC<PlatformManagementHeaderProps> = ({
   onApply,
   onReset,
 }) => (
-  <header className="bg-white px-8 pt-6 pb-6 sticky top-0 z-50 border-b border-gray-100 shadow-sm">
-    <div className="max-w-[1600px] mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <Typography.Title
-          heading={3}
-          className="text-[22px] font-semibold text-gray-900 !mb-0"
-        >
-          {tNoOptions('platform_management_page_title', '平台管理')}
-        </Typography.Title>
+  <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="flex flex-wrap items-center gap-6">
+      <div className="flex items-center gap-3">
+        <Typography.Text className="text-gray-600 text-sm whitespace-nowrap">
+          {tNoOptions('platform_management_filter_label_time', '时间范围')}
+        </Typography.Text>
+        <Select
+          className="w-[160px]"
+          value={draftFilters.timeRange}
+          optionList={timeRangeOptions}
+          onChange={value =>
+            onDraftFilterChange({ timeRange: value as TimeRangeKey })
+          }
+        />
       </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-6">
-          <div className="flex items-center gap-3">
-            <Typography.Text className="text-gray-600 text-sm whitespace-nowrap">
-              {tNoOptions('platform_management_filter_label_time', '时间范围')}
-            </Typography.Text>
-            <Select
-              className="w-[160px]"
-              value={draftFilters.timeRange}
-              optionList={timeRangeOptions}
-              onChange={value =>
-                onDraftFilterChange({ timeRange: value as TimeRangeKey })
-              }
-            />
-          </div>
-          <div className="flex items-center gap-3">
-            <Typography.Text className="text-gray-600 text-sm whitespace-nowrap">
-              {tNoOptions('platform_management_filter_label_space', '空间')}
-            </Typography.Text>
-            <Select
-              className="w-[200px]"
-              value={draftFilters.spaceId}
-              optionList={spaceOptions}
-              onChange={value =>
-                onDraftFilterChange({ spaceId: String(value) })
-              }
-              showSearch
-            />
-          </div>
-          <div className="flex items-center gap-3">
-            <Typography.Text className="text-gray-600 text-sm whitespace-nowrap">
-              {tNoOptions(
-                'platform_management_filter_label_project',
-                '项目类型',
-              )}
-            </Typography.Text>
-            <Select
-              className="w-[160px]"
-              value={draftFilters.projectType}
-              optionList={projectTypeOptions}
-              onChange={value =>
-                onDraftFilterChange({ projectType: value as ProjectTypeKey })
-              }
-            />
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button onClick={onReset} className="px-5">
-            {tNoOptions('platform_management_filter_reset', '重置')}
-          </Button>
-          <Button
-            type="primary"
-            onClick={onApply}
-            className="px-5 bg-[#3370FF] hover:bg-[#245BDB]"
-          >
-            {tNoOptions('platform_management_filter_apply', '查询')}
-          </Button>
-        </div>
+      <div className="flex items-center gap-3">
+        <Typography.Text className="text-gray-600 text-sm whitespace-nowrap">
+          {tNoOptions('platform_management_filter_label_space', '空间')}
+        </Typography.Text>
+        <Select
+          className="w-[200px]"
+          value={draftFilters.spaceId}
+          optionList={spaceOptions}
+          onChange={value => onDraftFilterChange({ spaceId: String(value) })}
+          showSearch
+        />
+      </div>
+      <div className="flex items-center gap-3">
+        <Typography.Text className="text-gray-600 text-sm whitespace-nowrap">
+          {tNoOptions('platform_management_filter_label_project', '项目类型')}
+        </Typography.Text>
+        <Select
+          className="w-[160px]"
+          value={draftFilters.projectType}
+          optionList={projectTypeOptions}
+          onChange={value =>
+            onDraftFilterChange({ projectType: value as ProjectTypeKey })
+          }
+        />
       </div>
     </div>
-  </header>
+    <div className="flex items-center gap-3">
+      <Button onClick={onReset} className="px-5">
+        {tNoOptions('platform_management_filter_reset', '重置')}
+      </Button>
+      <Button
+        type="primary"
+        onClick={onApply}
+        className="px-5 bg-[#3370FF] hover:bg-[#245BDB]"
+      >
+        {tNoOptions('platform_management_filter_apply', '查询')}
+      </Button>
+    </div>
+  </div>
 );
