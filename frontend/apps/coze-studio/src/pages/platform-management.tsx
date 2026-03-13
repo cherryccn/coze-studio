@@ -397,8 +397,8 @@ const PlatformManagementPage: FC = () => {
       <style>{PLATFORM_TABS_STYLE}</style>
 
       {/* Header section matching provided UI */}
-      <header className="bg-white px-8 pt-6 sticky top-0 z-50 shadow-sm border-b border-gray-200">
-        <div className="max-w-[1600px] mx-auto">
+      <header className="bg-white px-6 md:px-8 pt-6 sticky top-0 z-50 shadow-sm border-b border-gray-200">
+        <div className="max-w-[1440px] xl:max-w-[1600px] mx-auto w-full px-2">
           {/* Title on top, Tabs below it */}
           <div className="flex flex-col border-b border-gray-100">
             <Typography.Title
@@ -435,7 +435,7 @@ const PlatformManagementPage: FC = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-[1600px] mx-auto p-6 md:p-8">
+      <main className="flex-1 w-full max-w-[1440px] xl:max-w-[1600px] mx-auto p-6 md:p-8 px-8">
         <PlatformManagementContent
           activeTab={activeTab}
           filters={filters}
