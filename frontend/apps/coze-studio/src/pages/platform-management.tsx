@@ -399,15 +399,15 @@ const PlatformManagementPage: FC = () => {
       {/* Header section matching provided UI */}
       <header className="bg-white px-8 pt-6 sticky top-0 z-50 shadow-sm border-b border-gray-200">
         <div className="max-w-[1600px] mx-auto">
-          {/* Title and Tabs in one line */}
-          <div className="flex items-center gap-8 border-b border-gray-100">
+          {/* Title on top, Tabs below it */}
+          <div className="flex flex-col border-b border-gray-100">
             <Typography.Title
               heading={3}
-              className="text-[20px] font-semibold text-gray-900 !mb-[14px]"
+              className="text-[20px] font-semibold text-gray-900 mb-4"
             >
               {tNoOptions('platform_management_page_title', '平台管理')}
             </Typography.Title>
-            <div className="platform-management-tabs flex-1">
+            <div className="platform-management-tabs">
               <Tabs
                 activeKey={activeTab}
                 onChange={key => setActiveTab(String(key))}
