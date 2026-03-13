@@ -38,12 +38,8 @@ export interface TrendLineChartProps {
 
 const DEFAULT_HEIGHT = 212;
 const DEFAULT_COLOR = '#3370FF';
-const PANEL_SURFACE_STYLE = {
-  backgroundColor: '#FFFFFF',
-  borderColor: 'rgba(15, 23, 42, 0.08)',
-  boxShadow: '0 18px 48px rgba(15, 23, 42, 0.04)',
-};
 
+import { useTrendLineChart } from './use-trend-line-chart';
 import { TrendLineChartSvg } from './trend-line-chart-svg';
 import {
   formatDateFull,
@@ -51,7 +47,6 @@ import {
   buildAreaPath,
   buildLinePath,
 } from './trend-line-chart-helpers';
-import { useTrendLineChart } from './use-trend-line-chart';
 
 export const TrendLineChart: FC<TrendLineChartProps> = ({
   title,
@@ -85,16 +80,13 @@ export const TrendLineChart: FC<TrendLineChartProps> = ({
   const latestValue = data[data.length - 1]?.value ?? 0;
 
   return (
-    <div
-      className="rounded-[16px] border border-solid px-[18px] py-[16px]"
-      style={PANEL_SURFACE_STYLE}
-    >
+    <div className="bg-white rounded-[12px] border border-gray-100 p-6 shadow-sm h-full flex flex-col">
       <div className="flex items-start justify-between gap-[12px]">
         <div className="min-w-0">
-          <Typography.Text className="block text-[13px] font-[600]">
+          <Typography.Text className="block text-[15px] text-gray-900 font-medium">
             {title}
           </Typography.Text>
-          <Typography.Text className="mt-[4px] block text-[12px] coz-fg-secondary">
+          <Typography.Text className="mt-[4px] block text-[13px] text-gray-500">
             {isEmpty
               ? tNoOptions('platform_management_empty_trend', '暂无趋势数据')
               : tNoOptions(
@@ -106,8 +98,8 @@ export const TrendLineChart: FC<TrendLineChartProps> = ({
       </div>
       {isEmpty ? (
         <div
-          className="mt-[12px] flex flex-col items-center justify-center gap-[8px]"
-          style={{ height }}
+          className="mt-[12px] flex-1 flex flex-col items-center justify-center gap-[8px]"
+          style={{ minHeight: height }}
         >
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
             <path
@@ -121,13 +113,13 @@ export const TrendLineChart: FC<TrendLineChartProps> = ({
             <circle cx="16" cy="20" r="2" fill="#E5E6EB" />
             <circle cx="22" cy="10" r="2" fill="#E5E6EB" />
           </svg>
-          <Typography.Text className="text-[12px] coz-fg-secondary">
+          <Typography.Text className="text-[12px] text-gray-400">
             {emptyText ||
               tNoOptions('platform_management_empty_trend', '暂无趋势数据')}
           </Typography.Text>
         </div>
       ) : (
-        <div ref={containerRef} className="relative mt-[12px]">
+        <div ref={containerRef} className="relative mt-[16px] flex-1">
           <TrendLineChartSvg
             chartWidth={chartWidth}
             height={height}
