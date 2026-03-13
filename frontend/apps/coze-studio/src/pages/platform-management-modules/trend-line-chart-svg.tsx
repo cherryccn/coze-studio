@@ -90,13 +90,13 @@ export const TrendLineChartSvg: FC<TrendLineChartSvgProps> = ({
             x2={plotRight}
             y2={y}
             stroke="rgba(148, 163, 184, 0.26)"
-            strokeWidth={0.8}
+            strokeWidth={0.5}
           />
           <text
-            x={plotLeft - 8}
+            x={plotLeft - 6}
             y={y + 3}
             textAnchor="end"
-            fontSize={10}
+            fontSize={9}
             fill="#86909C"
           >
             {tickFormatter(tick)}
@@ -109,9 +109,9 @@ export const TrendLineChartSvg: FC<TrendLineChartSvgProps> = ({
       <text
         key={`${label.text}-${i}`}
         x={label.x}
-        y={plotBottom + 16}
+        y={plotBottom + 12}
         textAnchor="middle"
-        fontSize={10}
+        fontSize={9}
         fill="#86909C"
       >
         {label.text}
@@ -123,7 +123,7 @@ export const TrendLineChartSvg: FC<TrendLineChartSvgProps> = ({
       d={buildLinePath(points)}
       fill="none"
       stroke={color}
-      strokeWidth={2.2}
+      strokeWidth={1.5}
       strokeLinejoin="round"
       strokeLinecap="round"
     />
@@ -133,10 +133,10 @@ export const TrendLineChartSvg: FC<TrendLineChartSvgProps> = ({
         key={i}
         cx={p.x}
         cy={p.y}
-        r={hoverIndex === i ? 4 : 2.5}
+        r={hoverIndex === i ? 2.5 : 1.5}
         fill={hoverIndex === i ? color : '#fff'}
         stroke={color}
-        strokeWidth={1.5}
+        strokeWidth={1}
         style={{ transition: 'r 0.15s ease, fill 0.15s ease' }}
       />
     ))}
