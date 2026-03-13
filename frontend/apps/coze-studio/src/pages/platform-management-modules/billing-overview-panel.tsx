@@ -354,48 +354,43 @@ export const BillingOverviewPanel: FC<BillingOverviewPanelProps> = ({
             </Typography.Title>
             <BillingCardsGrid cards={data.cards} />
           </div>
-          <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
-            <div className="xl:col-span-2 flex flex-col gap-5">
-              <div className="bg-white rounded-[12px] border border-gray-100 p-5 shadow-sm h-full">
-                <TrendLineChart
-                  title={tNoOptions(
-                    'platform_management_cost_trend',
-                    '费用趋势',
-                  )}
-                  data={(data.cost_trend || []).map(item => ({
-                    label: item.date || '',
-                    value: toFiniteNumber(item.amount),
-                  }))}
-                  valueFormatter={v => formatCurrency(v)}
-                  color="#3370FF"
-                />
-              </div>
-              <div className="bg-white rounded-[12px] border border-gray-100 p-5 shadow-sm h-full">
-                <TrendLineChart
-                  title={tNoOptions(
-                    'platform_management_token_trend',
-                    'Token 趋势',
-                  )}
-                  data={(data.token_trend || []).map(item => ({
-                    label: item.date || '',
-                    value: toFiniteNumber(item.tokens),
-                  }))}
-                  valueFormatter={v => formatNumber(v)}
-                  color="#7B61FF"
-                />
-              </div>
-            </div>
-            <div className="bg-white rounded-[12px] border border-gray-100 shadow-sm xl:col-span-1 overflow-hidden">
-              <BillingTopSpacesSection
-                topSpaces={data.top_spaces || []}
-                order={topSpacesOrder}
-                loading={loading}
-                onToggleOrder={toggleTopSpacesOrder}
-                formatCurrency={formatCurrency}
-                formatNumber={formatNumber}
-                toFiniteNumber={toFiniteNumber}
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+            <div className="bg-white rounded-[12px] border border-gray-100 p-5 shadow-sm h-full">
+              <TrendLineChart
+                title={tNoOptions('platform_management_cost_trend', '费用趋势')}
+                data={(data.cost_trend || []).map(item => ({
+                  label: item.date || '',
+                  value: toFiniteNumber(item.amount),
+                }))}
+                valueFormatter={v => formatCurrency(v)}
+                color="#3370FF"
               />
             </div>
+            <div className="bg-white rounded-[12px] border border-gray-100 p-5 shadow-sm h-full">
+              <TrendLineChart
+                title={tNoOptions(
+                  'platform_management_token_trend',
+                  'Token 趋势',
+                )}
+                data={(data.token_trend || []).map(item => ({
+                  label: item.date || '',
+                  value: toFiniteNumber(item.tokens),
+                }))}
+                valueFormatter={v => formatNumber(v)}
+                color="#7B61FF"
+              />
+            </div>
+          </div>
+          <div className="bg-white rounded-[12px] border border-gray-100 shadow-sm overflow-hidden mt-2">
+            <BillingTopSpacesSection
+              topSpaces={data.top_spaces || []}
+              order={topSpacesOrder}
+              loading={loading}
+              onToggleOrder={toggleTopSpacesOrder}
+              formatCurrency={formatCurrency}
+              formatNumber={formatNumber}
+              toFiniteNumber={toFiniteNumber}
+            />
           </div>
         </>
       ) : null}
