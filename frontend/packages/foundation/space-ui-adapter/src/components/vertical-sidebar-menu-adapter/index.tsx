@@ -150,18 +150,7 @@ export const buildMenuGroups = ({
     },
   ];
 
-  if (showPlatformManagement) {
-    workspaceItems.push({
-      key: 'platform',
-      icon: <IconCozCompass />,
-      activeIcon: <IconCozCompassFill />,
-      label: menuLabels.platform,
-      path: '/platform',
-      onClick: () => navigate('/platform'),
-    });
-  }
-
-  return [
+  const groups: MenuGroup[] = [
     {
       items: workspaceItems,
     },
@@ -186,6 +175,23 @@ export const buildMenuGroups = ({
       ],
     },
   ];
+
+  if (showPlatformManagement) {
+    groups.push({
+      items: [
+        {
+          key: 'platform',
+          icon: <IconCozCompass />,
+          activeIcon: <IconCozCompassFill />,
+          label: menuLabels.platform,
+          path: '/platform',
+          onClick: () => navigate('/platform'),
+        },
+      ],
+    });
+  }
+
+  return groups;
 };
 
 export const VerticalSidebarMenuAdapter: React.FC<

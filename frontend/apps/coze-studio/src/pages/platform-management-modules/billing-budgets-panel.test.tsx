@@ -213,6 +213,7 @@ function MockSwitch({
 function MockTable({
   columns,
   dataSource,
+  tableProps,
 }: {
   columns?: Array<{
     key?: string;
@@ -224,14 +225,28 @@ function MockTable({
     ) => ReactNode;
   }>;
   dataSource?: Array<Record<string, unknown>>;
+  tableProps?: {
+    columns?: Array<{
+      key?: string;
+      dataIndex?: string;
+      render?: (
+        value: unknown,
+        record: Record<string, unknown>,
+        index: number,
+      ) => ReactNode;
+    }>;
+    dataSource?: Array<Record<string, unknown>>;
+  };
 }) {
-  const firstRow = dataSource?.[0];
+  const effectiveColumns = columns ?? tableProps?.columns;
+  const effectiveDataSource = dataSource ?? tableProps?.dataSource;
+  const firstRow = effectiveDataSource?.[0];
 
   return (
     <div>
-      {`table:${dataSource?.length ?? 0}:${firstRow?.spaceName ?? ''}`}
+      {`table:${effectiveDataSource?.length ?? 0}:${firstRow?.spaceName ?? ''}`}
       {firstRow
-        ? columns?.map((column, index) => (
+        ? effectiveColumns?.map((column, index) => (
             <div key={column.key ?? column.dataIndex ?? String(index)}>
               {column.render
                 ? column.render(

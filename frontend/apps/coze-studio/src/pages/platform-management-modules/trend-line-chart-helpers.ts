@@ -25,6 +25,14 @@ export const formatDateShort = (raw: string): string => {
   return raw;
 };
 
+export const formatDateFull = (raw: string): string => {
+  const parts = raw.split('-');
+  if (parts.length >= 3) {
+    return `${parts[0]}/${parseInt(parts[1], 10)}/${parseInt(parts[2], 10)}`;
+  }
+  return raw;
+};
+
 export const abbreviateNumber = (value: number): string => {
   if (value >= MEGA) {
     return `${(value / MEGA).toFixed(1)}M`;

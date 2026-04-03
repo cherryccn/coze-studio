@@ -53,7 +53,10 @@ func (p *PlatformApplicationService) GetStatsOverview(ctx context.Context, req *
 		return nil, errors.New("platform application service is not initialized")
 	}
 
-	loc, _ := time.LoadLocation("Asia/Shanghai")
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		loc = time.FixedZone("CST", 8*3600)
+	}
 	startDate := time.UnixMilli(req.StartTime).In(loc).Format(time.DateOnly)
 	endDate := time.UnixMilli(req.EndTime).In(loc).Format(time.DateOnly)
 

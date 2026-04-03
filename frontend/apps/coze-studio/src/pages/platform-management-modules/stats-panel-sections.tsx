@@ -46,6 +46,39 @@ import {
 const tNoOptions = (key: string, fallback: string) =>
   I18n.t(key as unknown as I18nKeysNoOptionsType, {}, fallback);
 
+const STATS_RANKINGS_TABLE_STYLE = `
+.stats-rankings-table table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.stats-rankings-table thead th {
+  background: #F7F8FA;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 14px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.stats-rankings-table th,
+.stats-rankings-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #F1F5F9;
+  color: #1F2937;
+  font-size: 14px;
+}
+
+.stats-rankings-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.stats-rankings-table tbody tr:hover td {
+  background: #F8FAFC;
+}
+`;
+
 interface StatsHeaderProps {
   loading: boolean;
   onRefresh: () => void;
@@ -92,47 +125,82 @@ interface StatsRankingsPaginationProps {
 export const StatsHeader: FC<StatsHeaderProps> = ({ loading, onRefresh }) => (
   <div className="flex flex-wrap items-start justify-between gap-[12px]">
     <div className="flex flex-col gap-[4px]">
-      <Typography.Title heading={5} className="!mb-0">
+      <Typography.Title
+        heading={5}
+        className="!mb-0 text-[16px] font-semibold text-gray-900"
+      >
         {tNoOptions('platform_management_stats_title', '统计概览')}
       </Typography.Title>
-      <Typography.Text className="text-[12px] coz-fg-secondary">
+      <Typography.Text className="text-[12px] text-gray-500">
         {tNoOptions(
           'platform_management_stats_subtitle',
           '查看活跃度、调用质量与项目排行。',
         )}
       </Typography.Text>
     </div>
-    <Button
-      theme="light"
-      loading={loading}
-      onClick={onRefresh}
-      className="px-[16px] border border-solid coz-stroke-primary"
-      style={{ backgroundColor: '#F2F3F5', color: '#1F2329' }}
-    >
+    <Button size="small" loading={loading} onClick={onRefresh}>
       {tNoOptions('platform_management_refresh', '刷新')}
     </Button>
   </div>
 );
 
-const StatsMetricCard: FC<StatsMetricCardProps> = ({
+interface StatsMetricCardExtendedProps extends StatsMetricCardProps {
+  accentColor?: string;
+  valueColor?: string;
+}
+
+const StatsMetricCard: FC<StatsMetricCardExtendedProps> = ({
   title,
   value,
   description,
+  accentColor,
+  valueColor,
 }) => (
-  <div className="rounded-[10px] border border-solid coz-stroke-primary px-[12px] py-[12px]">
-    <Typography.Text className="text-[12px] coz-fg-secondary">
-      {title}
-    </Typography.Text>
-    <Typography.Title heading={4} className="!mb-0 mt-[8px]">
-      {value}
-    </Typography.Title>
-    {description ? (
-      <Typography.Text className="mt-[4px] text-[12px] coz-fg-secondary">
-        {description}
-      </Typography.Text>
+  <div className="rounded-[10px] border border-solid coz-stroke-primary overflow-hidden flex">
+    {accentColor ? (
+      <div
+        className="w-[3px] flex-shrink-0"
+        style={{ backgroundColor: accentColor }}
+      />
     ) : null}
+    <div className="px-[14px] py-[12px] flex-1 min-w-0">
+      <Typography.Text className="text-[12px] coz-fg-secondary">
+        {title}
+      </Typography.Text>
+      <Typography.Title
+        heading={4}
+        className="!mb-0 mt-[8px]"
+        style={valueColor ? { color: valueColor } : undefined}
+      >
+        {value}
+      </Typography.Title>
+      {description ? (
+        <Typography.Text className="mt-[4px] text-[12px] coz-fg-secondary">
+          {description}
+        </Typography.Text>
+      ) : null}
+    </div>
   </div>
 );
+
+const SUCCESS_RATE_HIGH = 0.9;
+const SUCCESS_RATE_LOW = 0.8;
+
+const resolveSuccessRateColor = (
+  rate: string | undefined,
+): string | undefined => {
+  const parsed = Number(rate ?? 0);
+  if (!parsed) {
+    return undefined;
+  }
+  if (parsed >= SUCCESS_RATE_HIGH) {
+    return '#00B42A';
+  }
+  if (parsed < SUCCESS_RATE_LOW) {
+    return '#F53F3F';
+  }
+  return '#FF7D00';
+};
 
 export const StatsOverviewCardsGrid: FC<{
   overview: StatsOverviewResponseData;
@@ -150,6 +218,7 @@ export const StatsOverviewCardsGrid: FC<{
         'platform_management_stats_card_active_space_desc',
         '日活空间 / 周活空间',
       )}
+      accentColor="#3370FF"
     />
     <StatsMetricCard
       title={tNoOptions(
@@ -157,6 +226,7 @@ export const StatsOverviewCardsGrid: FC<{
         '活跃项目数',
       )}
       value={formatStatsNumber(overview.active_project_count)}
+      accentColor="#3370FF"
     />
     <StatsMetricCard
       title={tNoOptions(
@@ -164,6 +234,7 @@ export const StatsOverviewCardsGrid: FC<{
         '调用总量',
       )}
       value={formatStatsNumber(overview.total_calls)}
+      accentColor="#7B61FF"
     />
     <StatsMetricCard
       title={tNoOptions(
@@ -171,6 +242,8 @@ export const StatsOverviewCardsGrid: FC<{
         '成功率',
       )}
       value={formatStatsPercentage(overview.success_rate)}
+      accentColor="#00B42A"
+      valueColor={resolveSuccessRateColor(overview.success_rate)}
     />
     <StatsMetricCard
       title={tNoOptions(
@@ -178,6 +251,7 @@ export const StatsOverviewCardsGrid: FC<{
         '平均时延',
       )}
       value={formatStatsDuration(overview.avg_latency_ms)}
+      accentColor="#F77234"
     />
     <StatsMetricCard
       title={tNoOptions(
@@ -185,6 +259,7 @@ export const StatsOverviewCardsGrid: FC<{
         '总 Token',
       )}
       value={formatStatsNumber(overview.total_tokens)}
+      accentColor="#7B61FF"
     />
   </div>
 );
@@ -198,30 +273,43 @@ const StatsRankingsHeader: FC<StatsRankingsHeaderProps> = ({
 }) => (
   <div className="flex flex-wrap items-start justify-between gap-[12px]">
     <div className="flex flex-col gap-[4px]">
-      <Typography.Title heading={5} className="!mb-0">
-        {tNoOptions('platform_management_stats_rankings_title', '项目排行')}
-      </Typography.Title>
+      <div className="flex items-center gap-[8px]">
+        <Typography.Title heading={5} className="!mb-0">
+          {tNoOptions('platform_management_stats_rankings_title', '项目排行')}
+        </Typography.Title>
+        <span
+          className="rounded-[10px] px-[8px] py-[1px] text-[11px] font-[500]"
+          style={{
+            backgroundColor: 'rgba(123,97,255,0.08)',
+            color: '#7B61FF',
+          }}
+        >
+          {total}
+        </span>
+      </div>
       <Typography.Text className="text-[12px] coz-fg-secondary">
         {tNoOptions(
           'platform_management_stats_rankings_subtitle',
-          `当前按 ${resolveStatsMetricLabel(metric)} 排序，共 ${total} 个项目`,
+          `当前按 ${resolveStatsMetricLabel(metric)} 排序`,
         )}
       </Typography.Text>
     </div>
     <div className="flex flex-wrap items-center gap-[10px]">
-      <Select
-        className="w-[180px]"
-        value={metric}
-        optionList={STATS_METRIC_OPTIONS}
-        onChange={onMetricChange}
-      />
-      <Button
-        theme="light"
-        loading={loading}
-        onClick={onRefresh}
-        className="px-[16px] border border-solid coz-stroke-primary"
-        style={{ backgroundColor: '#F2F3F5', color: '#1F2329' }}
-      >
+      <div className="flex items-center gap-[6px]">
+        <Typography.Text className="text-[12px] coz-fg-secondary whitespace-nowrap">
+          {tNoOptions(
+            'platform_management_stats_rankings_metric_label',
+            '指标',
+          )}
+        </Typography.Text>
+        <Select
+          className="w-[140px]"
+          value={metric}
+          optionList={STATS_METRIC_OPTIONS}
+          onChange={onMetricChange}
+        />
+      </div>
+      <Button size="small" loading={loading} onClick={onRefresh}>
         {tNoOptions('platform_management_refresh', '刷新')}
       </Button>
     </div>
@@ -244,13 +332,7 @@ const StatsRankingsPagination: FC<StatsRankingsPaginationProps> = ({
       )}
     </Typography.Text>
     <div className="flex items-center gap-[8px]">
-      <Button
-        size="small"
-        disabled={page <= 1 || loading}
-        onClick={onPrevPage}
-        className="px-[12px] border border-solid coz-stroke-primary"
-        style={{ backgroundColor: '#F2F3F5', color: '#1F2329' }}
-      >
+      <Button size="small" disabled={page <= 1 || loading} onClick={onPrevPage}>
         {tNoOptions('platform_management_records_prev_page', '上一页')}
       </Button>
       <Button
@@ -351,7 +433,8 @@ export const StatsRankingsSection: FC<StatsRankingsSectionProps> = ({
   const hasRows = Boolean((rankings.list ?? []).length);
 
   return (
-    <div className="rounded-[10px] border border-solid coz-stroke-primary px-[12px] py-[12px]">
+    <div className="rounded-[12px] bg-white border border-gray-100 px-5 pt-6 pb-5 shadow-sm">
+      <style>{STATS_RANKINGS_TABLE_STYLE}</style>
       <StatsRankingsHeader
         loading={loading}
         metric={metric}
@@ -361,7 +444,7 @@ export const StatsRankingsSection: FC<StatsRankingsSectionProps> = ({
       />
 
       {rankingsErrorText ? (
-        <div className="mt-[12px]">
+        <div className="mt-4">
           <PlatformErrorState
             errorText={rankingsErrorText}
             onRetry={onRefresh}
@@ -370,7 +453,7 @@ export const StatsRankingsSection: FC<StatsRankingsSectionProps> = ({
       ) : null}
 
       {!loading && !rankingsErrorText && !hasRows ? (
-        <div className="mt-[12px]">
+        <div className="mt-4">
           <PlatformEmptyState
             title={tNoOptions(
               'platform_management_stats_rankings_empty',
@@ -383,16 +466,17 @@ export const StatsRankingsSection: FC<StatsRankingsSectionProps> = ({
 
       {hasRows ? (
         <>
-          <div className="mt-[12px] overflow-hidden">
+          <div className="stats-rankings-table mt-4 overflow-hidden">
             <Table
-              columns={columns}
-              dataSource={rankings.list ?? []}
-              loading={loading}
-              pagination={false}
-              rowKey={record =>
-                `${record.project_type || 'unknown'}-${record.project_id || 0}`
-              }
-              scroll={{ x: 1012 }}
+              scrollX={1012}
+              tableProps={{
+                columns,
+                dataSource: rankings.list ?? [],
+                loading,
+                pagination: false,
+                rowKey: (record: StatsRankingItem) =>
+                  `${record.project_type || 'unknown'}-${record.project_id || 0}`,
+              }}
             />
           </div>
 

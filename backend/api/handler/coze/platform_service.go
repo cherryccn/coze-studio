@@ -139,11 +139,17 @@ func GetPlatformBillingOverview(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	topSpacesOrder := string(c.Query("top_spaces_order"))
+	if topSpacesOrder != "asc" {
+		topSpacesOrder = "desc"
+	}
+
 	resp, err := platform.PlatformApplicationSVC.GetBillingOverview(ctx, &platform.BillingOverviewReq{
-		StartTime:   startTime,
-		EndTime:     endTime,
-		SpaceIDs:    spaceIDs,
-		ProjectType: projectType,
+		StartTime:      startTime,
+		EndTime:        endTime,
+		SpaceIDs:       spaceIDs,
+		ProjectType:    projectType,
+		TopSpacesOrder: topSpacesOrder,
 	})
 	if err != nil {
 		platformInternalServerErrorResponse(ctx, c, err)

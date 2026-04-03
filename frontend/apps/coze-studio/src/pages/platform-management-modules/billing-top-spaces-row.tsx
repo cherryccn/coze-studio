@@ -99,20 +99,20 @@ export const BillingTopSpacesRow: FC<BillingTopSpacesRowProps> = ({
           transition: 'width 0.4s ease',
         }}
       />
-      <div className="relative grid grid-cols-[48px,1fr,100px,120px,100px] items-center gap-[8px] py-[10px] px-[8px]">
-        <RankBadge rank={index + rankingFallbackIndexStart} />
-        <div className="flex items-center gap-[6px] min-w-0">
-          <Typography.Text className="text-[13px] text-gray-800 truncate font-medium">
-            {item.space_name || String(item.space_id || '--')}
-          </Typography.Text>
+      <div className="relative flex items-center py-[8px] px-[8px]">
+        <div className="flex-shrink-0 mr-[10px]">
+          <RankBadge rank={index + rankingFallbackIndexStart} />
         </div>
-        <Typography.Text className="text-[12px] text-right text-gray-500 tabular-nums">
+        <Typography.Text className="text-[14px] text-gray-800 truncate font-medium flex-1 min-w-0">
+          {item.space_name || String(item.space_id || '--')}
+        </Typography.Text>
+        <Typography.Text className="text-[14px] text-gray-500 tabular-nums whitespace-nowrap w-[56px] text-right ml-[24px]">
           {percent}%
         </Typography.Text>
-        <Typography.Text className="text-[13px] text-right font-[600] text-gray-900 tabular-nums">
+        <Typography.Text className="text-[14px] font-[600] text-gray-900 tabular-nums whitespace-nowrap w-[104px] text-right ml-[24px]">
           {formatCurrency(item.amount)}
         </Typography.Text>
-        <Typography.Text className="text-[12px] text-right text-gray-500 tabular-nums">
+        <Typography.Text className="text-[14px] text-gray-500 tabular-nums whitespace-nowrap w-[80px] text-right ml-[24px]">
           {formatNumber(item.tokens)}
         </Typography.Text>
       </div>

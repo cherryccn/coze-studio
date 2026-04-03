@@ -15,12 +15,13 @@
  */
 
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { useRequest } from 'ahooks';
 import { passport } from '@coze-studio/api-schema';
 import {
   setUserInfo,
+  refreshUserInfo,
   useLoginStatus,
   type UserInfo,
 } from '@coze-foundation/account-adapter';
@@ -32,6 +33,13 @@ export const useLoginService = ({
   email: string;
   password: string;
 }) => {
+  const handleLoginSuccess = useCallback((data: UserInfo) => {
+    setUserInfo(data);
+    // Re-fetch full user info from PassportAccountInfoV2 to get fields
+    // like platform_management_access that the login API does not return.
+    void refreshUserInfo();
+  }, []);
+
   const loginService = useRequest(
     async () => {
       const res = (await passport.PassportWebEmailLoginPost({
@@ -42,7 +50,7 @@ export const useLoginService = ({
     },
     {
       manual: true,
-      onSuccess: setUserInfo,
+      onSuccess: handleLoginSuccess,
     },
   );
 
@@ -56,7 +64,7 @@ export const useLoginService = ({
     },
     {
       manual: true,
-      onSuccess: setUserInfo,
+      onSuccess: handleLoginSuccess,
     },
   );
 

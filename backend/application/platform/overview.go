@@ -27,10 +27,11 @@ import (
 )
 
 type BillingOverviewReq struct {
-	StartTime   int64
-	EndTime     int64
-	SpaceIDs    []int64
-	ProjectType string
+	StartTime      int64
+	EndTime        int64
+	SpaceIDs       []int64
+	ProjectType    string
+	TopSpacesOrder string // "asc" or "desc" (default "desc")
 }
 
 type BillingOverviewResp struct {
@@ -105,7 +106,10 @@ func (p *PlatformApplicationService) GetBillingOverview(ctx context.Context, req
 		TopSpaces:  make([]TopSpaceItem, 0),
 	}
 
-	loc, _ := time.LoadLocation("Asia/Shanghai")
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		loc = time.FixedZone("CST", 8*3600)
+	}
 	now := time.Now().In(loc)
 
 	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc).UnixMilli()
@@ -171,6 +175,10 @@ func (p *PlatformApplicationService) GetBillingOverview(ctx context.Context, req
 	}
 
 	// top spaces
+	topSpacesOrderDir := "DESC"
+	if req.TopSpacesOrder == "asc" {
+		topSpacesOrderDir = "ASC"
+	}
 	qTop := p.db.WithContext(ctx).
 		Table("billing_daily_agg AS b").
 		Select("b.space_id AS space_id, COALESCE(s.name,'') AS space_name, COALESCE(SUM(b.total_amount),0) AS amount, COALESCE(SUM(b.total_tokens),0) AS tokens").
@@ -179,7 +187,7 @@ func (p *PlatformApplicationService) GetBillingOverview(ctx context.Context, req
 	qTop = withDailyAggFilterWithAlias(qTop, req, "b")
 	if err := qTop.
 		Group("b.space_id, s.name").
-		Order("SUM(b.total_amount) DESC").
+		Order("SUM(b.total_amount) " + topSpacesOrderDir).
 		Limit(10).
 		Scan(&resp.TopSpaces).Error; err != nil {
 		return nil, err

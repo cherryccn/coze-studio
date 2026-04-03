@@ -107,7 +107,7 @@ export const BillingTopSpacesHeader: FC<BillingTopSpacesHeaderProps> = ({
       : tNoOptions('platform_management_top_spaces_asc', '升序');
 
   return (
-    <div className="px-[18px] pt-4 pb-4">
+    <div className="px-5 pt-6 pb-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <TrophyIcon />
@@ -118,7 +118,7 @@ export const BillingTopSpacesHeader: FC<BillingTopSpacesHeaderProps> = ({
             {tNoOptions('platform_management_top_spaces', 'Top 空间成本排行')}
           </Typography.Title>
           {topSpacesCount > 0 ? (
-            <span className="rounded-full px-[8px] py-[2px] text-[12px] font-[500] bg-[#FFF7E8] text-[#FF7D00]">
+            <span className="rounded-full px-[8px] py-[1px] text-[12px] font-[500] bg-[#FFF7E8] text-[#FF7D00]">
               Top {Math.min(topSpacesCount, displayLimit)}
             </span>
           ) : null}
@@ -135,7 +135,7 @@ export const BillingTopSpacesHeader: FC<BillingTopSpacesHeaderProps> = ({
           </span>
         </Button>
       </div>
-      <Typography.Text className="text-[13px] text-gray-500 mt-2 block">
+      <Typography.Text className="text-[12px] text-gray-500 mt-[6px] block leading-[16px]">
         {tNoOptions(
           'platform_management_top_spaces_subtitle',
           '展示本期费用排名前 10 的空间',

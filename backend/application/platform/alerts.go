@@ -129,7 +129,7 @@ func (p *PlatformApplicationService) CheckBudgetAlerts(ctx context.Context, now 
 
 	loc, err := time.LoadLocation("Asia/Shanghai")
 	if err != nil || loc == nil {
-		loc = time.Local
+		loc = time.FixedZone("CST", 8*3600)
 	}
 	monthKey, monthStartMS, monthEndMS := currentMonthBounds(now.In(loc), loc)
 

@@ -20,6 +20,7 @@ import { I18n, type I18nKeysNoOptionsType } from '@coze-arch/i18n';
 import { Typography } from '@coze-arch/coze-design';
 
 import type { FilterSummaryItem, PlatformFilters, TimeRangeKey } from './types';
+import { abbreviateNumber } from './trend-line-chart-helpers';
 import { TrendLineChart } from './trend-line-chart';
 import {
   PlatformEmptyState,
@@ -279,15 +280,15 @@ const KpiCard: FC<{
   value: string;
 }> = ({ label, value }) => (
   <div
-    className="rounded-[12px] bg-white border border-gray-100 p-6 flex flex-col justify-center"
-    style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)' }}
+    className="rounded-[12px] bg-white border border-gray-100 px-4 py-4 flex flex-col justify-center"
+    style={{ boxShadow: '0 1px 4px rgba(0, 0, 0, 0.04)' }}
   >
-    <Typography.Text className="text-[14px] text-gray-500 font-medium">
+    <Typography.Text className="text-[13px] text-gray-500 font-medium leading-[18px]">
       {label}
     </Typography.Text>
     <Typography.Title
-      heading={2}
-      className="!mb-0 !mt-2 text-[28px] font-bold text-gray-900"
+      heading={3}
+      className="!mb-0 !mt-1 text-[22px] font-bold text-gray-900 leading-[28px]"
     >
       {value}
     </Typography.Title>
@@ -295,7 +296,7 @@ const KpiCard: FC<{
 );
 
 const BillingCardsGrid: FC<BillingCardsGridProps> = ({ cards }) => (
-  <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
     <KpiCard
       label={tNoOptions('platform_management_card_today_cost', '今日费用')}
       value={formatCurrency(cards?.today_cost)}
@@ -332,7 +333,7 @@ export const BillingOverviewPanel: FC<BillingOverviewPanelProps> = ({
   const shouldShowContent = !loading && !errorText && !isEmpty;
 
   return (
-    <div className="py-[4px] flex flex-col gap-6">
+    <div className="flex flex-col gap-5 py-2">
       {loading ? <PlatformLoadingState /> : null}
       {errorText ? (
         <PlatformErrorState
@@ -348,13 +349,13 @@ export const BillingOverviewPanel: FC<BillingOverviewPanelProps> = ({
           <div>
             <Typography.Title
               heading={5}
-              className="!mb-4 text-[18px] font-semibold text-gray-900"
+              className="!mb-4 text-[16px] font-semibold text-gray-900"
             >
               {tNoOptions('platform_management_overview_title', '计费总览')}
             </Typography.Title>
             <BillingCardsGrid cards={data.cards} />
           </div>
-          <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             <TrendLineChart
               title={tNoOptions('platform_management_cost_trend', '费用趋势')}
               data={(data.cost_trend || []).map(item => ({
@@ -364,7 +365,7 @@ export const BillingOverviewPanel: FC<BillingOverviewPanelProps> = ({
               valueFormatter={v => formatCurrency(v)}
               tickFormatter={v => `¥${abbreviateNumber(v)}`}
               color="#3370FF"
-            />{' '}
+            />
             <TrendLineChart
               title={tNoOptions(
                 'platform_management_token_trend',
@@ -378,7 +379,7 @@ export const BillingOverviewPanel: FC<BillingOverviewPanelProps> = ({
               color="#7B61FF"
             />
           </div>
-          <div className="mt-2">
+          <div className="rounded-[12px] border border-gray-100 shadow-sm overflow-hidden">
             <BillingTopSpacesSection
               topSpaces={data.top_spaces || []}
               order={topSpacesOrder}

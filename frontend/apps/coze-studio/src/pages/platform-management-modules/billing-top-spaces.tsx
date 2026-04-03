@@ -85,25 +85,25 @@ export const BillingTopSpacesSection: FC<BillingTopSpacesSectionProps> = ({
         formatCurrency={formatCurrency}
       />
 
-      <div className="grid grid-cols-[48px,1fr,100px,120px,100px] items-center gap-[8px] px-[18px] py-[10px] bg-gray-50 border-y border-gray-100">
-        <Typography.Text className="text-[12px] text-gray-500 font-medium">
+      <div className="flex items-center px-[28px] py-[8px] bg-gray-50 border-y border-gray-100">
+        <Typography.Text className="text-[12px] text-gray-500 font-medium w-[24px] flex-shrink-0 mr-[10px]">
           {tNoOptions('platform_management_top_spaces_rank', '排名')}
         </Typography.Text>
-        <Typography.Text className="text-[12px] text-gray-500 font-medium">
+        <Typography.Text className="text-[12px] text-gray-500 font-medium flex-1 min-w-0">
           {tNoOptions('platform_management_top_spaces_name', '空间')}
         </Typography.Text>
-        <Typography.Text className="text-[12px] text-gray-500 font-medium text-right">
+        <Typography.Text className="text-[12px] text-gray-500 font-medium whitespace-nowrap w-[56px] text-right ml-[24px]">
           {tNoOptions('platform_management_top_spaces_percent', '占比')}
         </Typography.Text>
-        <Typography.Text className="text-[12px] text-gray-500 font-medium text-right">
+        <Typography.Text className="text-[12px] text-gray-500 font-medium whitespace-nowrap w-[104px] text-right ml-[24px]">
           {tNoOptions('platform_management_top_spaces_amount', '费用')}
         </Typography.Text>
-        <Typography.Text className="text-[12px] text-gray-500 font-medium text-right">
+        <Typography.Text className="text-[12px] text-gray-500 font-medium whitespace-nowrap w-[80px] text-right ml-[24px]">
           Token
         </Typography.Text>
       </div>
 
-      <div className="px-[18px] pb-[18px] pt-2 flex-1">
+      <div className="px-5 pb-4 pt-[6px] flex-1">
         {topSpaces.length ? (
           <div className="flex flex-col gap-1">
             {topSpaces.slice(0, DISPLAY_LIMIT).map((item, index) => (

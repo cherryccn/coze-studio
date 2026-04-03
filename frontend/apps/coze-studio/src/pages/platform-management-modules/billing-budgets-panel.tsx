@@ -56,18 +56,18 @@ const BUDGETS_TABLE_STYLE = `
 .platform-management-budgets-table thead th {
   background: #F7F8FA;
   color: #475569;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-bottom: 1px solid #E2E8F0;
 }
 
 .platform-management-budgets-table th,
 .platform-management-budgets-table td {
-  padding: 16px 16px;
+  padding: 12px 14px;
   border-bottom: 1px solid #F1F5F9;
   color: #1F2937;
-  font-size: 14px;
+  font-size: 12px;
   vertical-align: top;
 }
 
@@ -124,14 +124,14 @@ const BillingBudgetsHeader: FC<BillingBudgetsHeaderProps> = ({
 }) => (
   <div className="flex flex-wrap items-center justify-between gap-4">
     <div className="min-w-0 flex-1">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         <Typography.Title
           heading={5}
-          className="!mb-0 text-[18px] font-semibold text-gray-900"
+          className="!mb-0 text-[16px] font-semibold text-gray-900"
         >
           {tNoOptions('platform_management_budgets_title', '预算与阈值')}
         </Typography.Title>
-        <span className="rounded-full px-[10px] py-[2px] text-[12px] font-[500] bg-gray-100 text-gray-600">
+        <span className="rounded-full px-[8px] py-[1px] text-[12px] font-[500] bg-gray-100 text-gray-600">
           {total}
         </span>
       </div>
@@ -166,7 +166,7 @@ const BudgetOperationCell: FC<BudgetOperationCellProps> = ({
   onSave,
 }) => (
   <div
-    className="flex min-w-[180px] flex-col items-start gap-[10px] rounded-[12px] border border-solid px-[12px] py-[10px]"
+    className="flex min-w-[180px] flex-col items-start gap-[8px] rounded-[8px] border border-solid px-[10px] py-[8px]"
     style={{
       borderColor: 'rgba(148, 163, 184, 0.16)',
       backgroundColor: '#FCFCFD',
@@ -384,7 +384,7 @@ export const BillingBudgetsPanel: FC<BillingBudgetsPanelProps> = ({
   const isEmpty = !loading && !errorText && !rows.length;
 
   return (
-    <div className="rounded-[12px] bg-white border border-gray-100 px-6 py-6 shadow-sm">
+    <div className="rounded-[12px] bg-white border border-gray-100 px-5 pt-6 pb-5 shadow-sm">
       <BillingBudgetsHeader
         busy={busy}
         loading={loading}
@@ -396,7 +396,7 @@ export const BillingBudgetsPanel: FC<BillingBudgetsPanelProps> = ({
       />
 
       {errorText ? (
-        <div className="mt-5">
+        <div className="mt-4">
           <PlatformErrorState
             errorText={errorText}
             onRetry={() => void load()}
@@ -405,11 +405,11 @@ export const BillingBudgetsPanel: FC<BillingBudgetsPanelProps> = ({
       ) : null}
 
       {isEmpty ? (
-        <div className="mt-5">
+        <div className="mt-4">
           <PlatformEmptyState onAction={onResetFilters} />
         </div>
       ) : (
-        <div className="platform-management-budgets-table mt-5 overflow-hidden">
+        <div className="platform-management-budgets-table mt-4 overflow-hidden">
           <style>{BUDGETS_TABLE_STYLE}</style>
           <Table
             scrollX={1120}
@@ -424,7 +424,7 @@ export const BillingBudgetsPanel: FC<BillingBudgetsPanelProps> = ({
         </div>
       )}
 
-      <div className="mt-5 flex items-start gap-2 rounded-[8px] px-4 py-3 bg-[#FFF7E8] border border-[#FFE4BA]">
+      <div className="mt-4 flex items-start gap-2 rounded-[8px] px-3 py-[10px] bg-[#FFF7E8] border border-[#FFE4BA]">
         <svg
           width="14"
           height="14"

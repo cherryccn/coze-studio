@@ -39,7 +39,6 @@ import {
   PlatformErrorState,
   PlatformLoadingState,
 } from './platform-request-states';
-import { FilterSummaryChips } from './filter-summary-chips';
 
 interface StatsPanelProps {
   filters: PlatformFilters;
@@ -211,12 +210,11 @@ export const StatsPanel: FC<StatsPanelProps> = ({
     isStatsPanelEmpty({ overview, rankings });
 
   return (
-    <div className="py-[16px] flex flex-col gap-[16px]">
+    <div className="py-2 flex flex-col gap-5">
       <StatsHeader
         loading={overviewLoading || rankingsLoading}
         onRefresh={handleRefresh}
       />
-      <FilterSummaryChips filterSummary={filterSummary} />
 
       {overviewLoading ? <PlatformLoadingState /> : null}
 

@@ -37,7 +37,7 @@ export interface TrendLineChartProps {
   emptyText?: string;
 }
 
-const DEFAULT_HEIGHT = 100;
+const DEFAULT_HEIGHT = 180;
 const DEFAULT_COLOR = '#3370FF';
 
 import { useTrendLineChart } from './use-trend-line-chart';
@@ -81,13 +81,13 @@ export const TrendLineChart: FC<TrendLineChartProps> = ({
   const latestValue = data[data.length - 1]?.value ?? 0;
 
   return (
-    <div className="bg-white rounded-[12px] border border-gray-100 p-4 shadow-sm h-full flex flex-col">
+    <div className="bg-white rounded-[12px] border border-gray-100 p-5 shadow-sm h-full flex flex-col">
       <div className="flex items-start justify-between gap-[8px]">
         <div className="min-w-0">
-          <Typography.Text className="block text-[14px] text-gray-900 font-medium">
+          <Typography.Text className="block text-[14px] text-gray-900 font-medium leading-[20px]">
             {title}
           </Typography.Text>
-          <Typography.Text className="mt-[2px] block text-[12px] text-gray-500">
+          <Typography.Text className="mt-[4px] block text-[12px] text-gray-500 leading-[16px]">
             {isEmpty
               ? tNoOptions('platform_management_empty_trend', '暂无趋势数据')
               : tNoOptions(
@@ -99,10 +99,10 @@ export const TrendLineChart: FC<TrendLineChartProps> = ({
       </div>
       {isEmpty ? (
         <div
-          className="mt-[8px] flex-1 flex flex-col items-center justify-center gap-[6px]"
+          className="mt-[12px] flex-1 flex flex-col items-center justify-center gap-[8px]"
           style={{ minHeight: height }}
         >
-          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
             <path
               d="M4 24L10 16L16 20L22 10L28 14"
               stroke="#C9CDD4"
@@ -120,7 +120,7 @@ export const TrendLineChart: FC<TrendLineChartProps> = ({
           </Typography.Text>
         </div>
       ) : (
-        <div ref={containerRef} className="relative mt-3 flex-1">
+        <div ref={containerRef} className="relative mt-4 flex-1">
           <TrendLineChartSvg
             chartWidth={chartWidth}
             height={height}

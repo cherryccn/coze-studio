@@ -94,13 +94,13 @@ const RECORDS_TABLE_STYLE = `
   color: #475569;
   font-size: 13px;
   font-weight: 500;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-bottom: 1px solid #E2E8F0;
 }
 
 .platform-management-records-table th,
 .platform-management-records-table td {
-  padding: 16px 16px;
+  padding: 12px 14px;
   border-bottom: 1px solid #F1F5F9;
   color: #1F2937;
   font-size: 14px;
@@ -229,7 +229,7 @@ const BillingRecordsPagination: FC<BillingRecordsPaginationProps> = ({
   const to = Math.min(page * size, total);
 
   return (
-    <div className="mt-[16px] flex flex-wrap items-center justify-center gap-[16px] rounded-[14px] bg-[#F7F8FA] px-[14px] py-[12px]">
+    <div className="mt-[16px] flex flex-wrap items-center justify-center gap-[12px] rounded-[8px] bg-[#F7F8FA] px-[12px] py-[10px]">
       <Button size="small" disabled={page <= 1 || loading} onClick={onPrevPage}>
         {tNoOptions('platform_management_records_prev_page', '上一页')}
       </Button>
@@ -267,14 +267,14 @@ const BillingRecordsHeader: FC<BillingRecordsHeaderProps> = ({
 }) => (
   <div className="flex flex-wrap items-center justify-between gap-4">
     <div className="min-w-0 flex-1">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         <Typography.Title
           heading={5}
-          className="!mb-0 text-[18px] font-semibold text-gray-900"
+          className="!mb-0 text-[16px] font-semibold text-gray-900"
         >
           {tNoOptions('platform_management_records_title', '账单明细')}
         </Typography.Title>
-        <span className="rounded-full px-[10px] py-[2px] text-[12px] font-[500] bg-gray-100 text-gray-600">
+        <span className="rounded-full px-[8px] py-[1px] text-[12px] font-[500] bg-gray-100 text-gray-600">
           {total}
         </span>
       </div>
@@ -364,7 +364,7 @@ export const BillingRecordsPanel: FC<BillingRecordsPanelProps> = ({
   } = useBillingRecordsExport({ filters, query });
 
   return (
-    <div className="rounded-[12px] bg-white border border-gray-100 px-6 py-6 shadow-sm">
+    <div className="rounded-[12px] bg-white border border-gray-100 px-5 pt-6 pb-5 shadow-sm">
       <BillingRecordsHeader
         total={data.total ?? 0}
         keywordInput={keywordInput}
@@ -382,7 +382,7 @@ export const BillingRecordsPanel: FC<BillingRecordsPanelProps> = ({
       />
 
       {errorText ? (
-        <div className="mt-5">
+        <div className="mt-4">
           <PlatformErrorState
             errorText={errorText}
             onRetry={() => void load()}
@@ -391,12 +391,12 @@ export const BillingRecordsPanel: FC<BillingRecordsPanelProps> = ({
       ) : null}
 
       {isEmpty ? (
-        <div className="mt-5">
+        <div className="mt-4">
           <PlatformEmptyState onAction={onResetFilters} />
         </div>
       ) : (
         <>
-          <div className="platform-management-records-table mt-5 overflow-hidden">
+          <div className="platform-management-records-table mt-4 overflow-hidden">
             <style>{RECORDS_TABLE_STYLE}</style>
             <Table
               scrollX={1380}

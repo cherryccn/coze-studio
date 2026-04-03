@@ -127,9 +127,9 @@ const PLATFORM_TABS_STYLE = `
   margin-bottom: 0 !important;
 }
 .platform-management-tabs .coz-tabs-tab {
-  padding: 16px 0;
-  font-size: 15px;
-  margin-right: 32px;
+  padding: 12px 0;
+  font-size: 14px;
+  margin-right: 28px;
 }
 .platform-management-tabs .coz-tabs-tab-active {
   font-weight: 600;
@@ -397,13 +397,12 @@ const PlatformManagementPage: FC = () => {
       <style>{PLATFORM_TABS_STYLE}</style>
 
       {/* Header section matching provided UI */}
-      <header className="bg-white px-6 md:px-8 pt-6 sticky top-0 z-50 shadow-sm border-b border-gray-200">
+      <header className="bg-white px-6 md:px-8 pt-5 sticky top-0 z-50 shadow-sm border-b border-gray-200">
         <div className="max-w-[1440px] xl:max-w-[1600px] mx-auto w-full px-2">
-          {/* Title on top, Tabs below it */}
           <div className="flex flex-col border-b border-gray-100">
             <Typography.Title
               heading={3}
-              className="text-[20px] font-semibold text-gray-900 mb-4"
+              className="text-[18px] font-semibold text-gray-900 mb-3"
             >
               {tNoOptions('platform_management_page_title', '平台管理')}
             </Typography.Title>
@@ -419,8 +418,7 @@ const PlatformManagementPage: FC = () => {
             </div>
           </div>
 
-          {/* Filters section */}
-          <div className="py-4">
+          <div className="py-3">
             <PlatformManagementHeader
               draftFilters={draftFilters}
               timeRangeOptions={timeRangeOptions}
@@ -434,8 +432,7 @@ const PlatformManagementPage: FC = () => {
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-[1440px] xl:max-w-[1600px] mx-auto p-6 md:p-8 px-8">
+      <main className="flex-1 w-full max-w-[1440px] xl:max-w-[1600px] mx-auto px-6 md:px-8 py-5">
         <PlatformManagementContent
           activeTab={activeTab}
           filters={filters}

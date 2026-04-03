@@ -31,10 +31,20 @@ export const FilterSummaryChips: FC<FilterSummaryChipsProps> = ({
     {filterSummary.map(item => (
       <div
         key={item.key}
-        className="rounded-[8px] px-[10px] py-[6px] border border-solid coz-stroke-primary bg-[rgba(31,35,41,0.04)]"
+        className="flex items-center gap-[6px] rounded-full border border-solid px-[10px] py-[6px]"
+        style={{
+          backgroundColor: '#F7F8FA',
+          borderColor: 'rgba(148, 163, 184, 0.18)',
+        }}
       >
-        <Typography.Text className="text-[12px] coz-fg-secondary">
-          {item.label}：{item.value}
+        <span
+          className="h-[5px] w-[5px] rounded-full flex-shrink-0"
+          style={{ backgroundColor: '#3370FF' }}
+        />
+        <Typography.Text className="text-[12px]">
+          <span className="coz-fg-secondary">{item.label}</span>
+          <span className="mx-[4px] coz-fg-secondary">·</span>
+          <span className="font-[600]">{item.value}</span>
         </Typography.Text>
       </div>
     ))}
