@@ -87,6 +87,9 @@ importers:
       '@coze-foundation/account-ui-adapter':
         specifier: workspace:*
         version: link:../../packages/foundation/account-ui-adapter
+      '@coze-foundation/enterprise-store-adapter':
+        specifier: workspace:*
+        version: link:../../packages/foundation/enterprise-store-adapter
       '@coze-foundation/foundation-sdk':
         specifier: workspace:*
         version: link:../../packages/foundation/foundation-sdk
@@ -16798,6 +16801,9 @@ importers:
       '@coze-foundation/browser-upgrade-banner':
         specifier: workspace:*
         version: link:../browser-upgrade-banner
+      '@coze-foundation/enterprise-store-adapter':
+        specifier: workspace:*
+        version: link:../enterprise-store-adapter
       '@coze-foundation/global':
         specifier: workspace:*
         version: link:../global
@@ -17329,6 +17335,9 @@ importers:
       '@coze-foundation/account-ui-adapter':
         specifier: workspace:*
         version: link:../account-ui-adapter
+      '@coze-foundation/enterprise-store-adapter':
+        specifier: workspace:*
+        version: link:../enterprise-store-adapter
       '@coze-foundation/space-store':
         specifier: workspace:*
         version: link:../space-store
